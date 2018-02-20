@@ -45,7 +45,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.create({
           withCredentials: true
-        }).post('http://:3000/customerLogin', userData)
+        }).post('http://api.e-mobie.com:3000/customerLogin', userData)
         .then(response => {
           if (response.data.success) {
             context.commit('updateUser', response.data.user);
@@ -72,7 +72,7 @@ export default new Vuex.Store({
     },
     /* eslint-disable no-console */
     loadFlyers (context){
-      axios.get('http://:3000/events').then(response => {
+      axios.get('http://api.e-mobie.com:3000/events').then(response => {
         context.commit('updateFlyers', response.data.data)
       }).catch(e => {
         console.log(e.message);
@@ -92,7 +92,7 @@ export default new Vuex.Store({
         (resolve, reject) => {
           axios.create({
             withCredentials: true
-          }).post('http://:3000/createEvent', creationData).then(response => {
+          }).post('http://api.e-mobie.com:3000/createEvent', creationData).then(response => {
             resolve(response)
           }).catch(e => {
             reject(e)
@@ -111,7 +111,7 @@ export default new Vuex.Store({
     },
 /* eslint-enable no-console */
     publishEvent (context, eventID){
-      let url = 'http://:3000/event/'+eventID+'/publish'
+      let url = 'http://api.e-mobie.com:3000/event/'+eventID+'/publish'
       return new Promise(
         (resolve, reject) => {
           axios.create({
@@ -125,7 +125,7 @@ export default new Vuex.Store({
       )
     },
     cancelEvent (context, eventID){
-      let url = 'http://:3000/event/'+eventID+'/cancel'
+      let url = 'http://api.e-mobie.com:3000/event/'+eventID+'/cancel'
       return new Promise((resolve, reject) => {
         axios.create({
           withCredentials: true
