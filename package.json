@@ -5,7 +5,6 @@
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
-    "test": "vue-cli-service test",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -13,6 +12,7 @@
     "bootstrap": "^4.0.0",
     "connect-history-api-fallback": "^1.5.0",
     "del": "^3.0.0",
+    "dotenv": "^5.0.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.3.1",
     "moment": "^2.20.1",
@@ -27,17 +27,10 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.0-alpha.4",
-    "@vue/cli-plugin-eslint": "^3.0.0-alpha.4",
-    "@vue/cli-plugin-unit-mocha": "^3.0.0-alpha.4",
-    "@vue/cli-service": "^3.0.0-alpha.4",
-    "@vue/test-utils": "^1.0.0-beta.10",
-    "chai": "^4.1.2",
-    "lint-staged": "^6.0.0",
+    "@vue/cli-plugin-babel": "^3.0.0-beta.1",
+    "@vue/cli-plugin-eslint": "^3.0.0-beta.1",
+    "@vue/cli-service": "^3.0.0-beta.1",
     "vue-template-compiler": "^2.5.13"
-  },
-  "vue": {
-    "lintOnSave": true
   },
   "babel": {
     "presets": [
@@ -45,6 +38,7 @@
     ]
   },
   "eslintConfig": {
+    "root": true,
     "extends": [
       "plugin:vue/essential",
       "eslint:recommended"
@@ -59,18 +53,5 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ],
-  "gitHooks": {
-    "pre-commit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.js": [
-      "vue-cli-service lint",
-      "git add"
-    ],
-    "*.vue": [
-      "vue-cli-service lint",
-      "git add"
-    ]
-  }
+  ]
 }

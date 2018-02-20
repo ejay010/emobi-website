@@ -10,6 +10,7 @@ import NavigationBar from './components/NavigationBar.vue'
 // import Customer from './components/Customer.vue'
 
 export default {
+
   name: 'app',
   components: {
     NavigationBar,

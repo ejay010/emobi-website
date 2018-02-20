@@ -1,5 +1,4 @@
 import Vue from 'vue'
-
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 import routes from './routes'
@@ -10,7 +9,7 @@ import store from './store'
 
 import io from 'socket.io-client'
 import VueSocketio from 'vue-socket.io'
-Vue.use(VueSocketio, io('http://api.e-mobie.com:3000'))
+Vue.use(VueSocketio, io(process.env.VUE_APP_API_URL))
 
 import App from './App.vue'
 
@@ -32,7 +31,3 @@ new Vue({
   router: router,
   render: h => h(App)
 }).$mount('#app')
-
-/* eslint-disable no-console */
-console.log(router.app);
-/* eslint-enable no-console */
