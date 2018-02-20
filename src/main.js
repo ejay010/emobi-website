@@ -10,7 +10,7 @@ import store from './store'
 
 import io from 'socket.io-client'
 import VueSocketio from 'vue-socket.io'
-Vue.use(VueSocketio, io('http://localhost:3000'))
+Vue.use(VueSocketio, io('http://:3000'))
 
 import App from './App.vue'
 
