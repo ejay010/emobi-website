@@ -54,7 +54,6 @@ export default {
   },
   methods: {
     submitLoginData(){
-      /* eslint-disable no-console */
       this.$store.dispatch('LoginUser', this.$data).then(response => {
         console.log(response);
         if (response.success) {
@@ -72,9 +71,15 @@ export default {
             }
           })
         }
+      }).catch(e => {
+        if (e.status == 401) {
+          swal({
+            title: e.message,
+            text: 'Something is wrong, Credentials not available',
+            type: 'error'
+          })
+        }
       });
-
-      /* eslint-enable no-console */
     }
   }
 }

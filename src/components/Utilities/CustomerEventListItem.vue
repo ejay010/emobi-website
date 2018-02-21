@@ -20,7 +20,10 @@
     <small class="text-muted">{{customerEvent.content.status}}</small>
   </div>
   <small class="text-muted">{{customerEvent.content.category}}</small>
-  <p class="mb-1">Umm... you have yet to say what this awesome event is all about...soo N/A</p>
+  <p class="mb-1" v-if="customerEvent.content.description">
+    {{ customerEvent.content.description }}
+  </p>
+  <p class="mb-1" v-else>Umm... you have yet to say what this awesome event is all about...soo N/A</p>
   </span>
 </template>
 

@@ -4,20 +4,35 @@
     <div class="col-lg-12">
       <div class="card">
         <h3 class="card-header">
-          {{ eventTitle }}
+          {{ eventObj.title }}
         </h3>
         <div class="card-body">
           <form enctype="multipart/form-data" v-on:submit.prevent="submitChanges">
             <div class="form-group">
               <label for="eventName">Title</label>
-              <input type="text" name="eventName" id="eventName" class="form-control" v-model="eventTitle" />
+              <input type="text" name="eventName" id="eventName" class="form-control" v-model="eventObj.title" />
             </div>
 
             <div class="form-group">
               <label for="eventPurpose">Event Purpose</label>
               <select class="form-control" name="eventPurpose" id="eventPurpose">
-                <option>
-                  Option
+                <option value="casual_social">
+                  Casual Social
+                </option>
+                <option value="networking">
+                  Networking
+                </option>
+                <option value="spiritual">
+                  Spiritual
+                </option>
+                <option value="party">
+                  Party
+                </option>
+                <option value="education">
+                  Education
+                </option>
+                <option value="fitness">
+                  Fitness
                 </option>
               </select>
             </div>
@@ -27,7 +42,7 @@
               <div class="form-group">
                 <label for="startMonth">Month</label>
                 <select name="startMonth" id="startMonth" class="form-control" v-model="startTime.month">
-                  <option v-for="option in initMonth.options" v-bind:value="option.value" v-bind:key="option.value">
+                  <option v-for="option in Months.options" v-bind:value="option.value" v-bind:key="option.value">
                     {{ option.name }}
                   </option>
                 </select>
@@ -36,7 +51,7 @@
               <div class="form-group">
                 <label for="startDate">Date</label>
                 <select name="startDate" id="startDate" class="form-control" v-model="startTime.date">
-                  <option v-for="option in initStartDates.options" v-bind:key="option.value" v-bind:value="option.value">
+                  <option v-for="option in StartDates.options" v-bind:key="option.value" v-bind:value="option.value">
                     {{ option.name }}
                   </option>
                 </select>
@@ -45,25 +60,25 @@
               <div class="form-group">
                 <label for="startYear">Year</label>
                 <select name="startYear" id="startYear" class="form-control" v-model="startTime.year">
-                  <option v-for="option in initYear.options" v-bind:key="option.value" v-bind:value="option.value">
+                  <option v-for="option in Years.options" v-bind:key="option.value" v-bind:value="option.value">
                     {{ option.name }}
                   </option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="startTimeHH">Hour</label>
-                <select name="startTimeHH" id="startTimeHH" class="form-control" v-model="startTime.hour">
-                  <option v-for="option in initTimeHH" :key="option.value" :value="option.value">
+                <label for="startHour">Hour</label>
+                <select name="startHour" id="startHour" class="form-control" v-model="startTime.hour">
+                  <option v-for="option in Hours" :key="option.value" :value="option.value">
                     {{option.name}}
                   </option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="startTimeMM">Minute</label>
-                <select name="startTimeMM" id="startTimeMM" class="form-control" v-model="startTime.min">
-                  <option v-for="option in initTimeMM" :key="option.value" :value="option.value">
+                <label for="startMinutes">Minute</label>
+                <select name="startMinutes" id="startMinutes" class="form-control" v-model="startTime.min">
+                  <option v-for="option in Minutes" :key="option.value" :value="option.value">
                     {{ option.name }}
                   </option>
                 </select>
@@ -86,53 +101,53 @@
             <label>Finish Date & time</label>
             <div class="form-row">
               <div class="form-group">
-                <label for="startMonth">Month</label>
-                <select name="startMonth" id="startMonth" class="form-control" v-model="finishTime.month">
-                  <option v-for="option in initMonth.options" v-bind:value="option.value" v-bind:key="option.value">
+                <label for="finishMonth">Month</label>
+                <select name="finishMonth" id="finishMonth" class="form-control" v-model="finishTime.month">
+                  <option v-for="option in Months.options" v-bind:value="option.value" v-bind:key="option.value">
                     {{ option.name }}
                   </option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="startDate">Date</label>
-                <select name="startDate" id="startDate" class="form-control" v-model="finishTime.date">
-                  <option v-for="option in initEndDates.options" v-bind:key="option.value" v-bind:value="option.value">
+                <label for="finishDate">Date</label>
+                <select name="finishDate" id="finishDate" class="form-control" v-model="finishTime.date">
+                  <option v-for="option in FinishDates.options" v-bind:key="option.value" v-bind:value="option.value">
                     {{ option.name }}
                   </option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="startYear">Year</label>
-                <select name="startYear" id="startYear" class="form-control" v-model="finishTime.year">
-                  <option v-for="option in initYear.options" v-bind:key="option.value" v-bind:value="option.value">
+                <label for="finishYear">Year</label>
+                <select name="finishYear" id="finishYear" class="form-control" v-model="finishTime.year">
+                  <option v-for="option in Years.options" v-bind:key="option.value" v-bind:value="option.value">
                     {{ option.name }}
                   </option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="finishTimeHH">Hour</label>
-                <select name="finishTimeHH" id="finishTimeHH" class="form-control" v-model="finishTime.hour">
-                  <option v-for="option in initTimeHH" :key="option.value" :value="option.value">
+                <label for="finishHour">Hour</label>
+                <select name="finishHour" id="finishHour" class="form-control" v-model="finishTime.hour">
+                  <option v-for="option in Hours" :key="option.value" :value="option.value">
                     {{option.name}}
                   </option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="startTimeMM">Minute</label>
-                <select name="startTimeMM" id="startTimeMM" class="form-control" v-model="finishTime.min">
-                  <option v-for="option in initTimeMM" :key="option.value" :value="option.value">
+                <label for="finishMinutes">Minute</label>
+                <select name="finishMinutes" id="finishMinutes" class="form-control" v-model="finishTime.min">
+                  <option v-for="option in Minutes" :key="option.value" :value="option.value">
                     {{ option.name }}
                   </option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="startTimeAMPM">AM/PM</label>
-                <select name="startTimeAMPM" id="startTimeAMPM" class="form-control" v-model="finishTime.amPm">
+                <label for="finishTimeAMPM">AM/PM</label>
+                <select name="finishTimeAMPM" id="finishTimeAMPM" class="form-control" v-model="finishTime.amPm">
                   <option value="AM">
                     AM
                   </option>
@@ -149,7 +164,7 @@
 
             <div class="from-group">
               <label for="eventDescription">Event Description</label>
-              <textarea name="eventDescription" id="eventDescription" class="form-control" v-model="eventDescription"></textarea>
+              <textarea name="eventDescription" id="eventDescription" class="form-control" v-model="eventObj.description"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -164,13 +179,12 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
+import swal from 'sweetalert2'
 export default {
   data() {
     return {
-      user: this.$store.user,
-      eventID: this.$route.params.eventkey,
-      eventTitle: "",
-      eventDescription: "",
+      user: this.$store.state.user,
+      eventObj: {},
       imageFile: {},
       startTime: {
         year: moment().year(),
@@ -193,14 +207,12 @@ export default {
   created: function() {
     /* eslint-disable no-console */
     let eventData = this.$store.getters.userEventByKey(this.$route.params.eventkey);
-    this.eventTitle = eventData.content.title
-    if (eventData.content.description) {
-      this.eventDescription = eventData.content.description
-    }
+    this.eventObj = eventData.content
     /* eslint-enable no-console */
   },
   computed: {
-    initYear() {
+    //Shared variable
+    Years() {
       let currentYear = moment().year()
       let optionsArray = []
       for (var i = currentYear; i <= currentYear + 10; i++) {
@@ -215,8 +227,8 @@ export default {
       }
       return obj;
     },
-
-    initMonth() {
+    //Shared variable
+    Months() {
       let currentMonth = moment().month()
       let obj = {
         selectedMonth: currentMonth,
@@ -238,7 +250,7 @@ export default {
       return obj
     },
     /* eslint-disable no-console */
-    initStartDates() {
+    StartDates() {
       let optionsArray = []
       let month = this.startTime.month + 1
       for (var i = 1; i <= moment(this.startTime.year+'-'+month, "YYYY-MM").daysInMonth(); i++) {
@@ -252,11 +264,10 @@ export default {
         selectedDate: currentDate,
         options: optionsArray
       }
-
       return obj;
     },
     /* eslint-disable no-console */
-    initEndDates() {
+    FinishDates() {
       let optionsArray = []
       let month = this.startTime.month + 1
       for (var i = 1; i <= moment(this.finishTime.year+'-'+month, "YYYY-MM").daysInMonth(); i++) {
@@ -273,8 +284,7 @@ export default {
 
       return obj;
     },
-
-    initTimeMM() {
+    Minutes() {
       let optionsArray = []
       for (var i = 0; i < 60; i++) {
         if (i < 10) {
@@ -291,7 +301,7 @@ export default {
       }
       return optionsArray;
     },
-    initTimeHH() {
+    Hours() {
       let optionsArray = []
       for (var i = 1; i <= 12; i++) {
         optionsArray.push({
@@ -300,19 +310,56 @@ export default {
       }
       return optionsArray;
     },
+    eventStartTimestamp(){
+      let year = this.startTime.year;
+      let month = this.startTime.month + 1;
+      if (month <= 9) {
+        month = '0'+month
+      }
+      let day = this.startTime.date;
+      let dateString = year+'-'+month+'-'+day;
+      // moment().utc()
+      let minute = this.startTime.min;
+      let hour = this.startTime.hour;
+      if (hour <= 9) {
+        hour = '0'+hour
+      }
+      let am_pm = this.startTime.amPm;
+      if (minute <= 9) {
+        minute = '0'+minute;
+      }
+      let timeString = hour+':'+minute+':00'+' '+am_pm
 
+      let timeStampString = dateString+' '+timeString
+      return moment.utc(timeStampString, 'YYYY-MM-DD hh:mm:ss a', true).format()
+    },
+    eventFinishTimestamp(){
+        let year = this.finishTime.year;
+        let month = this.finishTime.month + 1;
+        if (month <= 9) {
+          month = '0'+month
+        }
+        let day = this.finishTime.date;
+        let dateString = year+'-'+month+'-'+day;
+        // moment().utc()
+        let minute = this.finishTime.min;
+        let hour = this.finishTime.hour;
+        if (hour <= 9) {
+          hour = '0'+hour
+        }
+        let am_pm = this.finishTime.amPm;
+        if (minute <= 9) {
+          minute = '0'+minute;
+        }
+        let timeString = hour+':'+minute+':00 '+am_pm
+
+        let timeStampString = dateString+' '+timeString
+        // console.log(timeStampString);
+        // return timeStampString;
+        return moment.utc(timeStampString, 'YYYY-MM-DD hh:mm:ss a', true).format()
+    }
   },
   methods: {
-    fixDate(startOrFinish){
-      if (startOrFinish === "start") {
-        this.startDate = this.startDate + 1
-      }
-
-      if (startOrFinish === "finish") {
-        this.finishDate = this.finishDate + 1
-      }
-    },
-
 /* eslint-disable no-console */
   fileSelected(evt){
     let image = evt.target.files || evt.dataTransfer.files
@@ -324,10 +371,14 @@ export default {
       if (this.$data.imageFile[0] != null) {
         formData.append('flyer', this.$data.imageFile[0], this.$data.imageFile[0].name);
       }
-      formData.append('seedData', JSON.stringify(this.$data))
+      let data = this.$data;
+      data.startTimestamp = this.eventStartTimestamp;
+      data.finishTimestamp = this.eventFinishTimestamp;
+
+      formData.append('seedData', JSON.stringify(data))
 
       axios({
-        url: 'http://localhost:3000/editEvent',
+        url: process.env.VUE_APP_API_URL+'/editEvent',
         method: 'POST',
         data: formData,
         withCredentials: true,
@@ -336,9 +387,17 @@ export default {
           'Content-Type': 'mutlipart/form-data'
         }
       }).then(response => {
-        console.log(response);
+        swal({
+          title: 'Event Updated',
+          text: 'Changes saved',
+          type: 'success'
+        })
       }).catch(e => {
-        console.log(e.message);
+        swal({
+          title: 'Something Went Wrong',
+          text: e.message,
+          type: 'error'
+        })
       })
     }
     /* eslint-enable no-console */
