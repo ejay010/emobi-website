@@ -7,9 +7,8 @@
               <div class="media">
                 <img class="mr-3 rounded-circle" src="http://via.placeholder.com/100x100" alt="Generic placeholder image">
                 <div class="media-body">
-                  <h5 class="mt-0">Eulond Kelly</h5>
+                  <h5 class="mt-0">{{ this.$store.state.user.username }}</h5>
                   <p>
-                    My destiny is in the stars...
                   </p>
                 </div>
               </div>
