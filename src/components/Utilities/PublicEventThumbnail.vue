@@ -23,7 +23,7 @@ export default {
     flyerImageSrc(){
       if (this.flyer.flyer != null) {
         let flyerObj = JSON.parse(this.flyer.flyer)
-        let imgsrc = 'http://localhost:3000/'+flyerObj.filename+'-'+flyerObj.originalname
+        let imgsrc = process.env.VUE_APP_API_URL+flyerObj.filename+'-'+flyerObj.originalname
         return imgsrc;
       } else {
         return "http://via.placeholder.com/350x150"
