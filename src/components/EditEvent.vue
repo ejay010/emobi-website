@@ -387,11 +387,13 @@ export default {
           'Content-Type': 'mutlipart/form-data'
         }
       }).then(response => {
-        swal({
-          title: 'Event Updated',
-          text: 'Changes saved',
-          type: 'success'
-        })
+        if (response) {
+          swal({
+            title: 'Event Updated',
+            text: 'Changes saved',
+            type: 'success'
+          })
+        }
       }).catch(e => {
         swal({
           title: 'Something Went Wrong',
