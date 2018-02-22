@@ -63,7 +63,7 @@ export default {
   methods: {
       submitRegistration(){
         /* eslint-disable no-console */
-        axios.post('http://api.e-mobie.com:3000/customerRegister', this.$data)
+        axios.post(process.env.VUE_APP_API_URL+'/customerRegister', this.$data)
         .then(response => {
           if (!response.data.error) {
             swal({
