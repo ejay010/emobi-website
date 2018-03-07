@@ -33,7 +33,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.create({
           withCredentials: true
-        }).post(process.env.VUE_APP_API_URL+'/customer/login', userData)
+        }).post(process.env.VUE_APP_API_URL+'/Customer/login', userData)
         .then(response => {
           if (response.data.success) {
             context.commit('updateUser', response.data.user);

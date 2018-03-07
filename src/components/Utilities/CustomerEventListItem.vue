@@ -13,6 +13,10 @@
       <icon name="ban"></icon>
       Cancel
     </button>
+    <button class="btn btn-primary btn-sm">
+        <icon name="ticket"></icon>
+        Manage Tickets
+    </button>
 
   </div>
   <div class="d-flex w-100 justify-content-between">
