@@ -63,19 +63,27 @@ export default {
   methods: {
       submitRegistration(){
         /* eslint-disable no-console */
-        axios.post(process.env.VUE_APP_API_URL+'/customerRegister', this.$data)
+        axios.post(process.env.VUE_APP_API_URL+'/Customer/Register', this.$data)
         .then(response => {
           if (!response.data.error) {
-            swal({
-              title: 'Registration Complete',
-              text: 'We\'ve saved your credentials',
-              type: 'success'
-            }).then((result) => {
-              if (result.value) {
-                // TODO: after succcesful registration, instead of redirecting to login screen, redirect to home screen with user set
-                this.$router.push('CustomerLogin')
-              }
-            })
+            if (response.data.success) {
+              swal({
+                title: 'Registration Complete',
+                text: 'We\'ve saved your credentials',
+                type: 'success'
+              }).then((result) => {
+                if (result.value) {
+                  // TODO: after succcesful registration, instead of redirecting to login screen, redirect to home screen with user set
+                  this.$router.push('CustomerLogin')
+                }
+              })
+            } else {
+              swal({
+                title: 'Registration Failed',
+                text: 'Looks like those credentials are in use',
+                type: 'error'
+              })
+            }
           }
         })
         .catch(e => console.log(e))

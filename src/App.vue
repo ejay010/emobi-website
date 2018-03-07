@@ -7,7 +7,6 @@
 
 <script>
 import NavigationBar from './components/NavigationBar.vue'
-// import Customer from './components/Customer.vue'
 
 export default {
 
@@ -17,36 +16,31 @@ export default {
     // Customer,
   },
   created: function () {
-    this.$store.dispatch('loadFlyers')
+    this.$store.dispatch('loadEvents')
   },
   /* eslint-disable no-console */
   sockets: {
     customerNotifications(data){
-      console.log(data);
       switch (data.to) {
-        case this.$store.state.user.email:
-          this.$store.dispatch('alertUser', data);
-        break;
+        // case this.$store.state.user.email:
+        //   this.$store.dispatch('alertUser', data);
+        // break;
         case "all":
           switch (data.message) {
             case "Event Published":
-            console.log(data);
-              this.$store.dispatch('PublishPublicEvent', data.redis.data)
+              this.$store.dispatch('UpdateEvents', data.redis.data)
               break;
               case "Event Canceled":
-              this.$store.dispatch('CancelPublicEvent', data.redis.data)
+              this.$store.dispatch('UpdateEvents', data.redis.data)
               break;
               case "Event Updated":
-              console.log('Event Updated');
-              this.$store.dispatch('UpdatePublicEvent', data.redis.data)
-              console.log(data);
+              this.$store.dispatch('UpdateEvents', data.redis.data)
               break;
             default:
 
           }
           break;
         default:
-        console.log(data);
       }
     }
   }

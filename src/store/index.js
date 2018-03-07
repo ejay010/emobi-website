@@ -8,9 +8,8 @@ export default new Vuex.Store({
   state: {
     loggedIn: "false",
     user: {},
-    flyers: [],
+    events: [],
     category: "entertainment",
-    userEvents: [],
   },
   //mutations alter state
   mutations: {
@@ -20,36 +19,25 @@ export default new Vuex.Store({
     updateUser (state, updatedUser) {
       state.user = updatedUser
     },
-    updateFlyers (state, updatedFlyers) {
-      state.flyers = updatedFlyers
+    updateEvents (state, updatedFlyers) {
+      state.events = updatedFlyers
     },
     updateCategory (state, updatedCategory) {
       state.category = updatedCategory
     },
-    addToUserEvents (state, newEvent){
-      state.userEvents.push(newEvent)
-    },
-    updateUserEvents (state, events){
-      state.userEvents = events
-    }
   },
   // actions
   actions: {
-    /* eslint-disable no-console */
-    alertUser (context, alertData){
-      console.log(alertData);
-    },
-    /* eslint-enable no-console */
     LoginUser (context, userData) {
       // created my first promise
       return new Promise((resolve, reject) => {
         axios.create({
           withCredentials: true
-        }).post(process.env.VUE_APP_API_URL+'/customerLogin', userData)
+        }).post(process.env.VUE_APP_API_URL+'/customer/login', userData)
         .then(response => {
           if (response.data.success) {
             context.commit('updateUser', response.data.user);
-            context.commit('updateUserEvents', response.data.userEvents);
+            // context.commit('updateUserEvents', response.data.userEvents);
             resolve({
               success: true,
               status: 200,
@@ -71,11 +59,10 @@ export default new Vuex.Store({
       context.commit('updateUser', {})
     },
     /* eslint-disable no-console */
-    loadFlyers (context){
+    loadEvents (context){
       axios.get(process.env.VUE_APP_API_URL+'/events').then(response => {
-        context.commit('updateFlyers', response.data.data)
+        context.commit('updateEvents', response.data)
       }).catch(e => {
-        console.log(e.message);
       })
       // context.commit('updateFlyers', flyerData)
     },
@@ -100,23 +87,14 @@ export default new Vuex.Store({
       });
     },
 
-/* eslint-disable no-console */
-    updateUserEvents (context, rawData) {
-      console.log(rawData);
-      let formatedData = {
-        rediskey: rawData.redis.key,
-        content: rawData.redis.data
-      }
-      context.commit('addToUserEvents', formatedData)
-    },
-/* eslint-enable no-console */
     publishEvent (context, eventID){
-      let url = process.env.VUE_APP_API_URL+'/event/'+eventID+'/publish'
+      let url = process.env.VUE_APP_API_URL+'/events/'+eventID+'/publish'
       return new Promise(
         (resolve, reject) => {
           axios.create({
             withCredentials: true
           }).get(url).then(response => {
+            // console.log(response);
             resolve(response)
           }).catch(e => {
             reject(e)
@@ -125,7 +103,7 @@ export default new Vuex.Store({
       )
     },
     cancelEvent (context, eventID){
-      let url = process.env.VUE_APP_API_URL+'/event/'+eventID+'/cancel'
+      let url = process.env.VUE_APP_API_URL+'/events/'+eventID+'/cancel'
       return new Promise((resolve, reject) => {
         axios.create({
           withCredentials: true
@@ -138,33 +116,30 @@ export default new Vuex.Store({
     },
 
 /* eslint-disable no-console */
-    PublishPublicEvent(context, eventData){
-      let currentFlyers = context.state.flyers
-        currentFlyers.push(eventData)
-        context.commit('updateFlyers', currentFlyers)
-    },
-
-    CancelPublicEvent(context, eventData){
-      let currentFlyers = context.state.flyers
-      if (currentFlyers.length > 0) {
-        for (var i = 0; i < currentFlyers.length; i++) {
-          if (currentFlyers[i].rediskey == eventData.rediskey) {
-            currentFlyers.splice(i, 1)
-          }
-        }
-        context.commit('updateFlyers', currentFlyers)
-      }
-    },
-
-    UpdatePublicEvent(context, eventData){
-      let currentFlyers = context.getters.PublicFlyers
+    UpdateEvents(context, eventData){
+      let currentFlyers = context.state.events
       for (var i = 0; i < currentFlyers.length; i++) {
         if (currentFlyers[i].rediskey == eventData.rediskey) {
           currentFlyers.splice(i, 1)
         }
       }
-      currentFlyers.push(eventData)
-      context.commit('updateFlyers', currentFlyers)
+      currentFlyers.push({rediskey:eventData.rediskey, content:eventData})
+      context.commit('updateEvents', currentFlyers)
+    },
+    findPublicEvent(context, eventData){
+      let url = process.env.VUE_APP_API_URL+'/publicEvent/'+eventData.email+'/'+eventData.eventkey
+      return new Promise(
+        (resolve, reject) => {
+          axios.create({
+            withCredentials: true
+          }).get(url).then(response => {
+            // console.log(response);
+            resolve(response)
+          }).catch(e => {
+            reject(e)
+          })
+        }
+      )
     }
   },
 /* eslint-enable no-console */
@@ -177,15 +152,12 @@ export default new Vuex.Store({
         return false;
       }
     },
-    eventCounter: state => {
-      return state.userEvents.length;
-    },
-    userEventByKey: (state) => (key) => {
-      return state.userEvents.find(function (eventObj) {
+    // eventCounter: state => {
+    //   return state.userEvents.length;
+    // },
+    userEventByKey: (state, getters) => (key) => {
+      return getters.customerEvents.find(function (eventObj) {
         /* eslint-disable no-console */
-        // console.log(key);
-        // console.log(eventObj);
-        // console.log(eventObj.rediskey);
         if (eventObj.rediskey === key) {
           // console.log('inside eventobj');
           return eventObj;
@@ -194,7 +166,14 @@ export default new Vuex.Store({
       })
     },
     PublicFlyers: state => {
-      return state.flyers;
-    }
+      return state.events.filter(flyer => flyer.content.status == 'published');
+    },
+    customerEvents: (state, getters) => {
+      if (getters.userLoggedIn) {
+        return state.events.filter(flyer => flyer.content.publisher == state.user.email)
+      } else {
+        return null
+      }
+    },
   }
 })

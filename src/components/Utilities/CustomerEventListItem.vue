@@ -5,11 +5,11 @@
       <icon name="edit"></icon>
       Edit
     </router-link>
-    <button v-if="!published" class="btn btn-primary btn-sm" v-on:click="togglePublish">
+    <button v-if="!published" class="btn btn-primary btn-sm" v-on:click="PublishEvent">
       <icon name="bullhorn"></icon>
       Publish
     </button>
-    <button v-else class="btn btn-danger btn-sm" v-on:click="togglePublish">
+    <button v-else class="btn btn-danger btn-sm" v-on:click="CancelEvent">
       <icon name="ban"></icon>
       Cancel
     </button>
@@ -48,51 +48,50 @@ import swal from 'sweetalert2'
     },
     methods: {
       /* eslint-disable no-console */
-      togglePublish(){
-        if (this.published) {
-          this.$store.dispatch('cancelEvent', this.customerEvent.rediskey).then((response) => {
-            if (!response.data.success) {
+      PublishEvent(){
+        this.$store.dispatch('publishEvent', this.customerEvent.rediskey).then((response) => {
+          if (!response.data.success) {
+            swal({
+              title: 'Something went wrong!',
+              text: 'Please check your connection or contact System Admin',
+              type: 'error'
+            })
+          } else {
+            let currentEvent = response.data.updatedEvent
+            if (currentEvent.rediskey === this.customerEvent.rediskey) {
+              this.customerEvent.content.status = 'published'
               swal({
-                title: 'Something went wrong!',
-                text: 'Please check your connection or contact System Admin',
-                type: 'error'
+                title: 'Event Published',
+                text: 'Ok now it\'s share-able',
+                type: 'success',
               })
-            } else {
-              let currentEvent = response.data.updatedEvent
-              console.log(currentEvent);
-              if (currentEvent.rediskey === this.customerEvent.rediskey) {
-                this.customerEvent.content.status = 'unpublished'
-                swal({
-                  title: 'Event Canceled',
-                  text: ':( We hope it\'s just postponed',
-                  type: 'warning',
-                })
-              }
             }
-          })
-        } else {
-          this.$store.dispatch('publishEvent', this.customerEvent.rediskey).then((response) => {
-            if (!response.data.success) {
-              swal({
-                title: 'Something went wrong!',
-                text: 'Please check your connection or contact System Admin',
-                type: 'error'
-              })
-            } else {
-              let currentEvent = response.data.updatedEvent
-              if (currentEvent.rediskey === this.customerEvent.rediskey) {
-                this.customerEvent.content.status = 'published'
-                swal({
-                  title: 'Event Published',
-                  text: 'Ok now it\'s share-able',
-                  type: 'success',
-                })
-              }
-            }
+          }
 
-          })
-        }
-      }
+        })
+      },
+
+      CancelEvent(){
+        this.$store.dispatch('cancelEvent', this.customerEvent.rediskey).then((response) => {
+          if (!response.data.success) {
+            swal({
+              title: 'Something went wrong!',
+              text: 'Please check your connection or contact System Admin',
+              type: 'error'
+            })
+          } else {
+            let currentEvent = response.data.updatedEvent
+            if (currentEvent.rediskey === this.customerEvent.rediskey) {
+              this.customerEvent.content.status = 'unpublished'
+              swal({
+                title: 'Event Canceled',
+                text: ':( We hope it\'s just postponed',
+                type: 'warning',
+              })
+            }
+          }
+        })
+      },
       /* eslint-enable no-console */
     }
   }

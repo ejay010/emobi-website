@@ -8,6 +8,8 @@ import CustomerEvents from '../components/EventsPage.vue';
 import CustomerTickets from '../components/PurchasedTickets.vue'
 import EditEvent from '../components/EditEvent.vue'
 
+import EventView from '../components/EventView.vue'
+
 let routes = [
   {
     path: '/',
@@ -50,6 +52,11 @@ let routes = [
     path: '/customer/:email/edit/:eventkey',
     name: 'EditEvent',
     component: EditEvent
+  },
+  {
+    path: '/publicEvent/:email/:eventkey',
+    name: 'EventView',
+    component: EventView
   }
 ]
 

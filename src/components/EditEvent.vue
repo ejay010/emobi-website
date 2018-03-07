@@ -15,7 +15,7 @@
 
             <div class="form-group">
               <label for="eventPurpose">Event Purpose</label>
-              <select class="form-control" name="eventPurpose" id="eventPurpose">
+              <select class="form-control" name="eventPurpose" id="eventPurpose" v-model="eventObj.category">
                 <option value="casual_social">
                   Casual Social
                 </option>
@@ -51,7 +51,7 @@
               <div class="form-group">
                 <label for="startDate">Date</label>
                 <select name="startDate" id="startDate" class="form-control" v-model="startTime.date">
-                  <option v-for="option in StartDates.options" v-bind:key="option.value" v-bind:value="option.value">
+                  <option v-for="option in StartDays.options" v-bind:key="option.value" v-bind:value="option.value">
                     {{ option.name }}
                   </option>
                 </select>
@@ -112,7 +112,7 @@
               <div class="form-group">
                 <label for="finishDate">Date</label>
                 <select name="finishDate" id="finishDate" class="form-control" v-model="finishTime.date">
-                  <option v-for="option in FinishDates.options" v-bind:key="option.value" v-bind:value="option.value">
+                  <option v-for="option in FinishDays.options" v-bind:key="option.value" v-bind:value="option.value">
                     {{ option.name }}
                   </option>
                 </select>
@@ -157,9 +157,14 @@
                 </select>
               </div>
             </div>
+            <div class="form-group" v-if="existingFlyer.exists">
+                <label for="currentflyer" v-if="existingFlyer.exists">Current Flyer</label>
+                <img class="card" v-if="existingFlyer.exists" v-bind:src="existingFlyer.src" name="currentflyer" id="currentflyer"/>
+            </div>
             <div class="form-group">
-              <label for="eventFlyer">The Flyer</label>
-              <input type="file" name="flyer" class="form-control" v-on:change="fileSelected" accept="image/*"/>
+                <label for="flyer" v-if="existingFlyer.exists">Change Flyer</label>
+                <label for="flyer" v-else>The Flyer</label>
+              <input type="file" name="flyer" id="flyer" class="form-control" v-on:change="fileSelected" accept="image/*"/>
             </div>
 
             <div class="from-group">
@@ -211,6 +216,18 @@ export default {
     /* eslint-enable no-console */
   },
   computed: {
+    existingFlyer() {
+      if (this.eventObj.flyer != null) {
+        let rawData = JSON.parse(this.eventObj.flyer)
+        rawData.exists = true
+        rawData.src = process.env.VUE_APP_API_URL+'/'+rawData.filename+'-'+rawData.originalname
+        return rawData
+      } else {
+        return {
+          exists: false
+        }
+      }
+    },
     //Shared variable
     Years() {
       let currentYear = moment().year()
@@ -250,7 +267,7 @@ export default {
       return obj
     },
     /* eslint-disable no-console */
-    StartDates() {
+    StartDays() {
       let optionsArray = []
       let month = this.startTime.month + 1
       for (var i = 1; i <= moment(this.startTime.year+'-'+month, "YYYY-MM").daysInMonth(); i++) {
@@ -267,7 +284,7 @@ export default {
       return obj;
     },
     /* eslint-disable no-console */
-    FinishDates() {
+    FinishDays() {
       let optionsArray = []
       let month = this.startTime.month + 1
       for (var i = 1; i <= moment(this.finishTime.year+'-'+month, "YYYY-MM").daysInMonth(); i++) {
@@ -317,6 +334,9 @@ export default {
         month = '0'+month
       }
       let day = this.startTime.date;
+      if (day <= 9) {
+        day = '0'+day
+      }
       let dateString = year+'-'+month+'-'+day;
       // moment().utc()
       let minute = this.startTime.min;
@@ -331,6 +351,7 @@ export default {
       let timeString = hour+':'+minute+':00'+' '+am_pm
 
       let timeStampString = dateString+' '+timeString
+      // return timeStampString
       return moment.utc(timeStampString, 'YYYY-MM-DD hh:mm:ss a', true).format()
     },
     eventFinishTimestamp(){
@@ -340,6 +361,9 @@ export default {
           month = '0'+month
         }
         let day = this.finishTime.date;
+        if (day <= 9) {
+          day = '0'+day
+        }
         let dateString = year+'-'+month+'-'+day;
         // moment().utc()
         let minute = this.finishTime.min;
@@ -354,7 +378,6 @@ export default {
         let timeString = hour+':'+minute+':00 '+am_pm
 
         let timeStampString = dateString+' '+timeString
-        // console.log(timeStampString);
         // return timeStampString;
         return moment.utc(timeStampString, 'YYYY-MM-DD hh:mm:ss a', true).format()
     }
@@ -376,9 +399,9 @@ export default {
       data.finishTimestamp = this.eventFinishTimestamp;
 
       formData.append('seedData', JSON.stringify(data))
-
+      let post_url = process.env.VUE_APP_API_URL+'/events/'+this.$data.eventObj.rediskey+'/edit'
       axios({
-        url: process.env.VUE_APP_API_URL+'/editEvent',
+        url: post_url,
         method: 'POST',
         data: formData,
         withCredentials: true,

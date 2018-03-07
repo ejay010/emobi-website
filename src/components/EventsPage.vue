@@ -115,11 +115,11 @@ import $ from 'jquery'
       };
     },
     computed: {
-      eventCounter() {
-        return this.$store.getters.eventCounter
-      },
       userEvents(){
-        return this.$store.state.userEvents;
+        return this.$store.getters.customerEvents;
+      },
+      eventCounter() {
+        return this.userEvents.length
       }
     },
     methods: {
