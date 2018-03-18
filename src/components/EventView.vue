@@ -1,63 +1,68 @@
 <template>
   <span>
+  <div class="container-fluid p-3">
+    <div class="row">
+        <div class="col-md">
+          <div class="card">
+            <img class="card-img-top" v-bind:src="flyerImg" />
+            <div class="card-body">
+              <h2 class="card-title">{{flyer.title}}</h2>
+              <p class="card-text">
+                <dl>
+                  <dt>
+                    Start
+                  </dt>
+                  <dd>
+                    {{StartTime}}
+                  </dd>
+                  <dt>
+                    Finish
+                  </dt>
+                  <dd>
+                    {{finishTime}}
+                  </dd>
+                  <dt>
+                    Description
+                  </dt>
+                  <dd>
+                    {{flyer.description}}
+                  </dd>
+                </dl>
+              </p>
+            </div>
+          </div>
+        </div>
 
-  <div class="container">
-    <div class="card">
-      <img class="card-img-top" v-bind:src="flyerImg"/>
-      <div class="card-body">
-        <h5 class="card-title">{{flyer.title}}</h5>
-        <p class="card-text">
-          <dl>
-            <dt>
-              Start
-            </dt>
-            <dd>
-              {{StartTime}}
-            </dd>
-            <dt>
-              Finish
-            </dt>
-            <dd>
-              {{finishTime}}
-            </dd>
-            <dt>
-              Description
-            </dt>
-            <dd>
-              {{flyer.description}}
-            </dd>
-            <dt>
-                Tickets
-            </dt>
-            <dd>
-                <div v-if="Tickets.length == 0">
+        <div class="col-sm-4">
+          <div class="card">
+              <div class="card-header">
+                  <h5>Tickets</h5>
+              </div>
+              <div class="card-body"  v-if="Tickets.length == 0">
                     <p>None Avaiable</p>
-                </div>
-                <div v-else>
-                    <div class="list-group">
-                        <div class="list-group-item" v-for="ticket in Tickets" :key="ticket._id">
+                  </div>
+                    <div class="list-group" v-else>
+                        <a class="list-group-item list-group-item-action" v-for="ticket in Tickets" :key="ticket._id" v-on:click="openPurchaseDiag(ticket)">
                           <div class="media">
                               <div class="media-body">
                                 <h5 class="mt-0">{{ticket.title}} | <small>{{ticket.paid_or_free}}</small></h5>
-                                <button class="btn btn-default" v-on:click="openPurchaseDiag(ticket)">Purchase</button>
+                                <!-- <button class="btn btn-default" >Purchase</button> -->
                               </div>
                           </div>
                             <p>Qty Avail: {{ticket.quantity_available}}</p>
                             <p>{{ticket.description}}</p>
-                        </div>
+                        </a>
                     </div>
-                </div>
-            </dd>
-          </dl>
-        </p>
-      </div>
+              </div>
+        </div>
+    </div>
     </div>
   </div>
   <div class="modal" tabindex="-1" role="dialog" id="purchaseTicketDiag">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
               <div class="modal-header">
-                  <h5 class="modal-title">Purchase Tickets</h5>
+                  <h5 class="modal-title">Purchase {{intendedPurchase.ticket.title}}</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -94,7 +99,11 @@ export default {
       flyer: {},
       Tickets: [],
       intendedQty: 1,
-      intendedPurchase: {}
+      intendedPurchase: {
+        ticket: {},
+        eventId: "",
+        purchaser: "",
+      }
     }
   },
   created: function() {
@@ -132,7 +141,7 @@ export default {
       let info = {}
       if (this.$store.state.user.email) {
         info = {
-          ticket: ticketDetails._id,
+          ticket: ticketDetails,
           eventId: ticketDetails.eventId,
           purchaser: this.$store.state.user.email,
         }

@@ -26,27 +26,20 @@
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
     </form>
     <router-link v-if="!LoggedIn" class="btn btn-outline-success" :to="{ name: 'CustomerLogin', params: {} }">Sign In</router-link>
-    <div v-if="LoggedIn" class="dropdown">
-      <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span>
-          <span style="display:inline-block;">
-            <icon name="user-circle" style="vertical-align:middle;"></icon>
-          </span>
-          <span style="display:inline-block;">ejay010@gmail.com</span>
-        </span>
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <router-link class="dropdown-item" :to="{ name: 'Customer', params: { email: customer.email } }">My Hub</router-link>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
-  </div>
-    </div>
+    <router-link v-if="LoggedIn" class="btn btn-outline-success" :to="{name: 'Customer', params: {email: customer.email} }">
+      <!-- {{customer.username}} -->
+      <icon name="home" class="icon-mod"></icon>
+    </router-link>
   </div>
 </nav>
 </template>
 
 <style>
-
+.icon-mod {
+  vertical-align: middle;
+  width: 25px;
+  height: 25px;
+}
 </style>
 
 <script>

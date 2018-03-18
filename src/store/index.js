@@ -149,6 +149,7 @@ export default new Vuex.Store({
     UpdateCreatedTickets(context, ticketData){
         let currentFlyers = context.state.CreatedTickets
         let currentPosition = "notFound"
+        console.log(ticketData._id);
         for (var i = 0; i < currentFlyers.length; i++) {
           if (currentFlyers[i]._id == ticketData._id) {
             currentPosition = i
@@ -158,9 +159,9 @@ export default new Vuex.Store({
         if (currentPosition != "notFound") {
           currentFlyers[currentPosition] = ticketData
         } else {
+          // console.log(currentFlyers);
           currentFlyers.push(ticketData)
         }
-
         context.commit('UpdateCreatedTickets', currentFlyers)
     },
     findPublicEvent(context, eventData){
@@ -170,7 +171,7 @@ export default new Vuex.Store({
           axios.create({
             withCredentials: true
           }).get(url).then(response => {
-            // console.log(response);
+            console.log(response);
             resolve(response)
           }).catch(e => {
             reject(e)

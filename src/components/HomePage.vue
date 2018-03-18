@@ -21,9 +21,11 @@
       <span class="sr-only">Next</span>
     </a>
   </div>
-    <div class="container">
-      <EventThumbnail v-for="flyer in PublicFlyers" v-bind:key="flyer._id" v-bind:flyer="flyer">
-      </EventThumbnail>
+    <div class="container-fluid">
+      <div class="card-columns p-3">
+        <EventThumbnail v-for="flyer in PublicFlyers" v-bind:key="flyer._id" v-bind:flyer="flyer">
+        </EventThumbnail>
+      </div>
     </div>
   </span>
 </template>

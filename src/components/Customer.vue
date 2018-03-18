@@ -44,12 +44,12 @@ export default {
   // },
   sockets: {
     customerNotifications (data) {
-      console.log(data);
+      // console.log(data);
       if (data.to === this.$store.state.user.email) {
         /* eslint-disable no-console */
         switch (data.message) {
           case 'Ticket Created':
-          console.log(data);
+          // console.log(data.redis.data);
           this.$store.dispatch('UpdateCreatedTickets', data.redis.data)
           break;
 
