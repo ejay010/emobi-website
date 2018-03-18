@@ -55,8 +55,8 @@ export default {
   methods: {
     submitLoginData(){
       this.$store.dispatch('LoginUser', this.$data).then(response => {
-        console.log(response);
         if (response.success) {
+          this.$store.dispatch('loadTickets')
           this.$data.valdCreds = true;
           swal({
             title: "Welcome!",

@@ -21,10 +21,8 @@ export default {
   /* eslint-disable no-console */
   sockets: {
     customerNotifications(data){
+      console.log(data);
       switch (data.to) {
-        // case this.$store.state.user.email:
-        //   this.$store.dispatch('alertUser', data);
-        // break;
         case "all":
           switch (data.message) {
             case "Event Published":

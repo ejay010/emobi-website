@@ -212,7 +212,7 @@ export default {
   created: function() {
     /* eslint-disable no-console */
     let eventData = this.$store.getters.userEventByKey(this.$route.params.eventkey);
-    this.eventObj = eventData.content
+    this.eventObj = eventData
     /* eslint-enable no-console */
   },
   computed: {
@@ -399,7 +399,7 @@ export default {
       data.finishTimestamp = this.eventFinishTimestamp;
 
       formData.append('seedData', JSON.stringify(data))
-      let post_url = process.env.VUE_APP_API_URL+'/events/'+this.$data.eventObj.rediskey+'/edit'
+      let post_url = process.env.VUE_APP_API_URL+'/events/'+this.$data.eventObj._id+'/edit'
       axios({
         url: post_url,
         method: 'POST',
@@ -410,14 +410,26 @@ export default {
           'Content-Type': 'mutlipart/form-data'
         }
       }).then(response => {
-        if (response) {
+        if (response.data.success) {
+          this.$store.dispatch('UpdateEvents', response.data.recieved)
           swal({
             title: 'Event Updated',
             text: 'Changes saved',
             type: 'success'
+          }).then((response) => {
+            if (response) {
+              this.$router.push({name:'CustomerEventList'})
+            }
+          })
+        } else {
+          swal({
+            title: 'Something Went Wrong',
+            text: response.data.message,
+            type: 'error'
           })
         }
       }).catch(e => {
+        console.log(e);
         swal({
           title: 'Something Went Wrong',
           text: e.message,

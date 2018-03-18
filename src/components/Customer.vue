@@ -17,7 +17,7 @@
           <nav class="nav nav-tabs nav-fill">
 
             <router-link class="nav-item nav-link"  :to="{ name: 'CustomerTickets', params: {} }">My Tickets</router-link>
-            <router-link class="nav-item nav-link" :to="{ name: 'CustomerEvents', params: {} }">My Events</router-link>
+            <router-link class="nav-item nav-link" :to="{ name: 'CustomerEventList', params: {} }">My Events</router-link>
 
 
                 <a href="#" class="nav-item nav-link">My Favorites <small><i>coming soon</i></small></a>
@@ -44,12 +44,17 @@ export default {
   // },
   sockets: {
     customerNotifications (data) {
+      console.log(data);
       if (data.to === this.$store.state.user.email) {
         /* eslint-disable no-console */
-        // data.message = notification type
         switch (data.message) {
+          case 'Ticket Created':
+          console.log(data);
+          this.$store.dispatch('UpdateCreatedTickets', data.redis.data)
+          break;
+
           case 'Event Created':
-          this.updateCustomerEvents(data);
+          this.$store.dispatch('UpdateEvents', data.redis.data);
             break;
           default:
 
@@ -58,11 +63,6 @@ export default {
       }
     }
   },
-  methods: {
-    updateCustomerEvents(data) {
-      this.$store.dispatch('updateUserEvents', data)
-    }
-  }
 }
 </script>
 

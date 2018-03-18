@@ -9,6 +9,8 @@ export default new Vuex.Store({
     loggedIn: "false",
     user: {},
     events: [],
+    CreatedTickets: [],
+    PurchasedTickets: [],
     category: "entertainment",
   },
   //mutations alter state
@@ -21,6 +23,9 @@ export default new Vuex.Store({
     },
     updateEvents (state, updatedFlyers) {
       state.events = updatedFlyers
+    },
+    UpdateCreatedTickets (state, updatedTickets) {
+      state.CreatedTickets = updatedTickets
     },
     updateCategory (state, updatedCategory) {
       state.category = updatedCategory
@@ -37,7 +42,6 @@ export default new Vuex.Store({
         .then(response => {
           if (response.data.success) {
             context.commit('updateUser', response.data.user);
-            // context.commit('updateUserEvents', response.data.userEvents);
             resolve({
               success: true,
               status: 200,
@@ -63,9 +67,17 @@ export default new Vuex.Store({
       axios.get(process.env.VUE_APP_API_URL+'/events').then(response => {
         context.commit('updateEvents', response.data)
       }).catch(e => {
+        console.log(e);
       })
       // context.commit('updateFlyers', flyerData)
     },
+
+    loadTickets (context){
+      axios.get(process.env.VUE_APP_API_URL+'/tickets/'+context.state.user.email+'/tickets').then((response) => {
+        context.commit('UpdateCreatedTickets', response.data.CustomerCreatedTickets)
+      })
+    },
+
     /* eslint-enable no-console */
     setCategory (context, category) {
       context.commit('updateCategory', category)
@@ -118,13 +130,38 @@ export default new Vuex.Store({
 /* eslint-disable no-console */
     UpdateEvents(context, eventData){
       let currentFlyers = context.state.events
+      let currentPosition = "notFound"
       for (var i = 0; i < currentFlyers.length; i++) {
-        if (currentFlyers[i].rediskey == eventData.rediskey) {
+        if (currentFlyers[i]._id == eventData._id) {
+          currentPosition = i
           currentFlyers.splice(i, 1)
         }
       }
-      currentFlyers.push({rediskey:eventData.rediskey, content:eventData})
+      if (currentPosition != "notFound") {
+        currentFlyers[currentPosition] = eventData
+      } else {
+        currentFlyers.push(eventData)
+      }
+
       context.commit('updateEvents', currentFlyers)
+    },
+
+    UpdateCreatedTickets(context, ticketData){
+        let currentFlyers = context.state.CreatedTickets
+        let currentPosition = "notFound"
+        for (var i = 0; i < currentFlyers.length; i++) {
+          if (currentFlyers[i]._id == ticketData._id) {
+            currentPosition = i
+            currentFlyers.splice(i, 1)
+          }
+        }
+        if (currentPosition != "notFound") {
+          currentFlyers[currentPosition] = ticketData
+        } else {
+          currentFlyers.push(ticketData)
+        }
+
+        context.commit('UpdateCreatedTickets', currentFlyers)
     },
     findPublicEvent(context, eventData){
       let url = process.env.VUE_APP_API_URL+'/publicEvent/'+eventData.email+'/'+eventData.eventkey
@@ -158,7 +195,7 @@ export default new Vuex.Store({
     userEventByKey: (state, getters) => (key) => {
       return getters.customerEvents.find(function (eventObj) {
         /* eslint-disable no-console */
-        if (eventObj.rediskey === key) {
+        if (eventObj._id === key) {
           // console.log('inside eventobj');
           return eventObj;
         }
@@ -166,14 +203,21 @@ export default new Vuex.Store({
       })
     },
     PublicFlyers: state => {
-      return state.events.filter(flyer => flyer.content.status == 'published');
+      return state.events.filter(flyer => flyer.status == 'published');
     },
     customerEvents: (state, getters) => {
       if (getters.userLoggedIn) {
-        return state.events.filter(flyer => flyer.content.publisher == state.user.email)
+        return state.events.filter(flyer => flyer.publisher == state.user.email)
       } else {
-        return null
+        return []
       }
     },
+    CreatedTicketByEvent: (state, getters) => (eventId) => {
+      return state.CreatedTickets.filter(function (ticketObj) {
+        if (ticketObj.eventId === eventId) {
+          return true
+        }
+      })
+    }
   }
 })

@@ -7,8 +7,10 @@ import CustomerProfile from '../components/ProfilePage.vue';
 import CustomerEvents from '../components/EventsPage.vue';
 import CustomerTickets from '../components/PurchasedTickets.vue'
 import EditEvent from '../components/EditEvent.vue'
+import CustomerEventList from '../components/Utilities/CustomerEventList.vue'
 
 import EventView from '../components/EventView.vue'
+import TicketManager from '../components/TicketManager.vue'
 
 let routes = [
   {
@@ -39,7 +41,20 @@ let routes = [
       {
         path:'events',
         name: 'CustomerEvents',
-        component: CustomerEvents
+        component: CustomerEvents,
+        children: [
+          {
+            path:'manageTickets/:eventId',
+            name: 'ManageTickets',
+            component: TicketManager,
+            props: true
+          },
+          {
+            path: 'eventlist',
+            name: 'CustomerEventList',
+            component: CustomerEventList,
+          }
+        ]
       },
       {
         path: 'tickets',

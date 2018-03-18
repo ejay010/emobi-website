@@ -22,7 +22,7 @@
     </a>
   </div>
     <div class="container">
-      <EventThumbnail v-for="flyer in PublicFlyers" v-bind:key="flyer.rediskey" v-bind:flyer="flyer">
+      <EventThumbnail v-for="flyer in PublicFlyers" v-bind:key="flyer._id" v-bind:flyer="flyer">
       </EventThumbnail>
     </div>
   </span>
@@ -41,6 +41,7 @@ export default {
   },
   computed: {
     PublicFlyers(){
+      // return []
       return this.$store.getters.PublicFlyers
     }
   }
