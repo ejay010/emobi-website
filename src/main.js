@@ -9,7 +9,7 @@ import store from './store'
 
 import io from 'socket.io-client'
 import VueSocketio from 'vue-socket.io'
-Vue.use(VueSocketio, io(process.env.VUE_APP_API_URL))
+Vue.use(VueSocketio, io(process.env.VUE_APP_API_URL, {secure: true}))
 import App from './App.vue'
 
 import 'jquery'
