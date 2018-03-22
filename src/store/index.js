@@ -30,6 +30,9 @@ export default new Vuex.Store({
     updateCategory (state, updatedCategory) {
       state.category = updatedCategory
     },
+    UpdatePurchasedTickets (state, updatedTickets) {
+      state.PurchasedTickets = updatedTickets
+    }
   },
   // actions
   actions: {
@@ -67,7 +70,7 @@ export default new Vuex.Store({
       axios.get(process.env.VUE_APP_API_URL+'/events').then(response => {
         context.commit('updateEvents', response.data)
       }).catch(e => {
-        console.log(e);
+        // console.log(e);
       })
       // context.commit('updateFlyers', flyerData)
     },
@@ -75,6 +78,12 @@ export default new Vuex.Store({
     loadTickets (context){
       axios.get(process.env.VUE_APP_API_URL+'/tickets/'+context.state.user.email+'/tickets').then((response) => {
         context.commit('UpdateCreatedTickets', response.data.CustomerCreatedTickets)
+      })
+    },
+
+    loadPurchasedTickets (context){
+      axios.get(process.env.VUE_APP_API_URL+'/tickets/'+context.state.user.email+'/PurchasedTickets').then((response) => {
+        context.commit('UpdatePurchasedTickets', response.data.PurchasedTickets)
       })
     },
 
@@ -149,7 +158,7 @@ export default new Vuex.Store({
     UpdateCreatedTickets(context, ticketData){
         let currentFlyers = context.state.CreatedTickets
         let currentPosition = "notFound"
-        console.log(ticketData._id);
+        // console.log(ticketData._id);
         for (var i = 0; i < currentFlyers.length; i++) {
           if (currentFlyers[i]._id == ticketData._id) {
             currentPosition = i
@@ -164,6 +173,26 @@ export default new Vuex.Store({
         }
         context.commit('UpdateCreatedTickets', currentFlyers)
     },
+
+    UpdatePurchasedTickets(context, ticketData){
+      console.log(ticketData);
+          let currentFlyers = context.state.PurchasedTickets
+          let currentPosition = "notFound"
+          // console.log(ticketData._id);
+          for (var i = 0; i < currentFlyers.length; i++) {
+            if (currentFlyers[i]._id == ticketData._id) {
+              currentPosition = i
+              currentFlyers.splice(i, 1)
+            }
+          }
+          if (currentPosition != "notFound") {
+            currentFlyers[currentPosition] = ticketData
+          } else {
+            // console.log(currentFlyers);
+            currentFlyers.push(ticketData)
+          }
+          context.commit('UpdatePurchasedTickets', currentFlyers)
+    },
     findPublicEvent(context, eventData){
       let url = process.env.VUE_APP_API_URL+'/publicEvent/'+eventData.email+'/'+eventData.eventkey
       return new Promise(
@@ -171,7 +200,7 @@ export default new Vuex.Store({
           axios.create({
             withCredentials: true
           }).get(url).then(response => {
-            console.log(response);
+            // console.log(response);
             resolve(response)
           }).catch(e => {
             reject(e)
@@ -219,6 +248,9 @@ export default new Vuex.Store({
           return true
         }
       })
+    },
+    Purchases: (state) => {
+      return state.PurchasedTickets
     }
   }
 })

@@ -7,7 +7,6 @@
 
 <script>
 import NavigationBar from './components/NavigationBar.vue'
-
 export default {
 
   name: 'app',
@@ -21,7 +20,7 @@ export default {
   /* eslint-disable no-console */
   sockets: {
     customerNotifications(data){
-      console.log(data);
+      // console.log(data);
       switch (data.to) {
         case "all":
           switch (data.message) {

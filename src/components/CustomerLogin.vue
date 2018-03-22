@@ -1,45 +1,66 @@
 <template>
-<div class="container">
+<div class="container pt-5">
 <div class="row">
-  <div class="col-lg">
+  <div class="col-6 offset-3">
     <div v-show="!validCreds" :class="wrongCreds" role="alert">
       Username or password not found...
     </div>
-      <form v-on:submit.prevent="submitLoginData">
-        <div class="from-group">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control" v-model="email" required/>
-        </div>
+    <div class="card">
+      <div class="card-header text-center">
+          <h5>Sign In</h5>
+      </div>
+        <div class="card-body">
+          <form v-on:submit.prevent="submitLoginData">
+            <div class="from-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-control" v-model="email" required/>
+            </div>
 
-        <div class="from-group">
-          <label for="password">Password</label>
-          <input type="password" name="password" id="password" class="form-control" v-model="password" required/>
-        </div>
+            <div class="from-group">
+              <label for="password">Password</label>
+              <input type="password" name="password" id="password" class="form-control" v-model="password" required/>
+            </div>
+            <hr/>
 
-        <div class="form-group">
-          <button type="submit" class="btn btn-primary">Sign In</button>
-          <router-link :to="{ name: 'CustomerRegister', params: {} }">Register here</router-link>
+            <div class="text-center mb-1">
+              <button type="submit" class="btn btn-success btn-lg btn-block" :disabled="loading">Sign In
+                <loader class="button-loader" :loading="loading" :color="loaderColor" :size="loaderSize"></loader>
+              </button>
+            </div>
+          </form>
+          <div class="text-center">
+            <router-link :to="{ name: 'CustomerRegister', params: {} }" class="btn btn-outline-secondary btn-lg btn-block" :class="{disabled: loading}">Sign Up</router-link>
+          </div>
         </div>
-      </form>
+    </div>
   </div>
 </div>
 </div>
 </template>
 
 <style>
-
+.button-loader {
+  display: inline;
+}
 </style>
 
 <script>
 // import axios from 'axios';
+import Loader from 'vue-spinner/src/PulseLoader.vue'
 import swal from 'sweetalert2';
 export default {
+  components: {
+    Loader
+  },
   data: function (){
     return {
+      loaderColor: '#fff',
+      loaderSize: '6px',
       email: "",
       password: "",
       validCreds: true,
-      test: this.$store.state.helloTest
+      test: this.$store.state.helloTest,
+      loading: false
     };
   },
   computed: {
@@ -54,9 +75,12 @@ export default {
   },
   methods: {
     submitLoginData(){
+      this.loading = true
       this.$store.dispatch('LoginUser', this.$data).then(response => {
+        this.loading = false
         if (response.success) {
           this.$store.dispatch('loadTickets')
+          this.$store.dispatch('loadPurchasedTickets')
           this.$data.valdCreds = true;
           swal({
             title: "Welcome!",
@@ -72,6 +96,7 @@ export default {
           })
         }
       }).catch(e => {
+        this.loading = false
         if (e.status == 401) {
           swal({
             title: e.message,

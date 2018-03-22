@@ -1,10 +1,10 @@
 <template>
 <span>
-  <div class="container">
+  <div class="container pt-5">
 
     <div class="card">
-      <div class="card-header">
-        Register
+      <div class="card-header text-center">
+        <h3>Register</h3>
       </div>
       <div class="card-body">
         <form v-on:submit.prevent="submitRegistration">
@@ -30,10 +30,9 @@
             <label for="dob">Date of Birth</label>
             <input type="date" class="form-control" name="dob" id="dob" v-model="dob" required />
           </div>
-
-          <div class="form-group">
-            <button type="submit" class="btn btn-success">Sign Up</button>
-          </div>
+            <button type="submit" class="btn btn-success btn-lg btn-block" :disabled="loading">Sign Up
+              <loader class="button-loader" :loading="loading" :color="loaderColor" :size="loaderSize"></loader>
+            </button>
         </form>
       </div>
     </div>
@@ -42,15 +41,24 @@
 </template>
 
 <style>
-
+.button-loader {
+  display: inline;
+}
 </style>
 
 <script>
 import axios from 'axios'
 import swal from 'sweetalert2'
+import Loader from 'vue-spinner/src/PulseLoader.vue'
 export default {
+  components: {
+    Loader
+  },
   data: function () {
     return {
+      loading: false,
+        loaderColor: '#fff',
+        loaderSize: '6px',
       email: "",
       password: "",
       password_confirm: "",
@@ -63,8 +71,10 @@ export default {
   methods: {
       submitRegistration(){
         /* eslint-disable no-console */
+        this.loading = true
         axios.post(process.env.VUE_APP_API_URL+'/Customer/Register', this.$data)
         .then(response => {
+          this.loading = false
           if (!response.data.error) {
             if (response.data.success) {
               swal({
@@ -86,7 +96,9 @@ export default {
             }
           }
         })
-        .catch(e => console.log(e))
+        .catch((e) => {
+          this.loading = false
+          console.log(e)})
         /* eslint-enable no-console */
       }
   }

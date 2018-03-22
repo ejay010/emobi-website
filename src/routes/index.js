@@ -8,6 +8,7 @@ import CustomerEvents from '../components/EventsPage.vue';
 import CustomerTickets from '../components/PurchasedTickets.vue'
 import EditEvent from '../components/EditEvent.vue'
 import CustomerEventList from '../components/Utilities/CustomerEventList.vue'
+import Qrcodereader from '../components/QrcodeReader.vue'
 
 import EventView from '../components/EventView.vue'
 import TicketManager from '../components/TicketManager.vue'
@@ -53,6 +54,11 @@ let routes = [
             path: 'eventlist',
             name: 'CustomerEventList',
             component: CustomerEventList,
+          },
+          {
+            path: 'scanTicket',
+            name: 'QrReader',
+            component: Qrcodereader
           }
         ]
       },

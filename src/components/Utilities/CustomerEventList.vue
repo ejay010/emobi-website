@@ -20,6 +20,10 @@
             <icon name="plus" style="vertical-align:middle;"></icon>
             Create a new Event
           </button>
+
+          <router-link class="btn btn-success btn-sm" :to="{ name: 'QrReader', params: {} }">
+            <icon name="qrcode" style="vertical-align:middle;"></icon>
+          Redeem Ticket/Voucher</router-link>
         </span>
         <hr />
         <div class="list-group">
@@ -45,7 +49,7 @@
 
             <div class="form-group">
               <label for="eventPurpose">What is the purpose of your event</label>
-              <select class="custom-select" name="eventPurpose" id="eventPurpose" v-model="eventPurpose">
+              <select class="custom-select" name="eventPurpose" id="eventPurpose" v-model="eventPurpose" required>
                 <option value="entertainment">
                   Entertainment
                 </option>
@@ -72,7 +76,7 @@
                 Is this a public (the world can see it) or private (just invited friends) event
               </p>
               <div class="custom-control custom-radio custom-control-inline">
-<input type="radio" id="customRadioInline1" name="customRadioInline1" value="public" v-model="eventType" class="custom-control-input">
+<input type="radio" id="customRadioInline1" name="customRadioInline1" value="public" v-model="eventType" class="custom-control-input" selected>
 <label class="custom-control-label" for="customRadioInline1">Public</label>
 </div>
 <div class="custom-control custom-radio custom-control-inline">
@@ -82,10 +86,12 @@
             </div>
             <div class="form-group">
               <label for="eventName">Give it a name...</label>
-              <input type="text" class="form-control" name="eventName" id="eventName" v-model="eventName" />
+              <input type="text" class="form-control" name="eventName" id="eventName" v-model="eventName" required/>
             </div>
 
-            <button class="btn btn-success" type="submit">Awesome-sauce, let's get started :)</button>
+            <button class="btn btn-success" type="submit" :disabled="loading">Awesome-sauce, let's get started :)
+              <loader class="button-loader" :loading="loading" :color="loaderColor" :size="loaderSize"></loader>
+            </button>
           </form>
         </div>
         <div class="modal-footer">
@@ -98,23 +104,31 @@
 </template>
 
 <style>
-
+.button-loader {
+  display: inline;
+}
 </style>
 
 <script>
+import Loader from 'vue-spinner/src/PulseLoader.vue'
 import CustomerEventListItem from './CustomerEventListItem.vue'
 import swal from 'sweetalert2'
 import $ from 'jquery'
   export default {
     components: {
-      CustomerEventListItem
+      CustomerEventListItem,
+      Loader
     },
     data() {
       return {
+          loading: false,
+            loaderColor: '#fff',
+            loaderSize: '6px',
         user: this.$store.state.user,
         eventPurpose: null,
-        eventName: "",
-        eventType: "",
+        eventName: null,
+        eventType: "public",
+        errors: []
       };
     },
     computed: {
@@ -126,9 +140,20 @@ import $ from 'jquery'
       }
     },
     methods: {
+      validateForm(){
+
+      },
       seedEvent() {
-        this.$store.dispatch('createEvent', this.$data).then(
+        this.loading = true
+        let data = {
+          user: this.user,
+          eventPurpose: this.eventPurpose,
+          eventName: this.eventName,
+          eventType: this.eventType
+        }
+        this.$store.dispatch('createEvent', data).then(
           response => {
+            this.loading = false
             /* eslint-disable no-console */
             if (response.data.success){
               $('#createEventForm').modal('hide')
@@ -148,8 +173,15 @@ import $ from 'jquery'
             }
             /* eslint-enable no-console */
           }
-        )
-      }
+        ).catch((e) => {
+          this.loading = false
+          swal({
+            title: "Something Went Wrong",
+            text: e.message,
+            type: 'error'
+          })
+        })
+      },
     }
   }
 </script>

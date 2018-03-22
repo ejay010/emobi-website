@@ -47,9 +47,9 @@ export default {
       // console.log(data);
       if (data.to === this.$store.state.user.email) {
         /* eslint-disable no-console */
+        console.log(data);
         switch (data.message) {
           case 'Ticket Created':
-          // console.log(data.redis.data);
           this.$store.dispatch('UpdateCreatedTickets', data.redis.data)
           break;
 
@@ -57,7 +57,6 @@ export default {
           this.$store.dispatch('UpdateEvents', data.redis.data);
             break;
           default:
-
         }
         /* eslint-enable no-console */
       }

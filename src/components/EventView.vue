@@ -75,8 +75,10 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary">Make Purchase</button>
-        <button type="reset" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary" :disabled="loading">Make Purchase
+                    <loader class="button-loader" :loading="loading" :color="loaderColor" :size="loaderSize"></loader>
+                  </button>
+        <button type="reset" class="btn btn-secondary" data-dismiss="modal" :disabled="loading">Close</button>
                 </div>
               </form>
           </div>
@@ -86,16 +88,26 @@
 </template>
 
 <style>
-
+.button-loader {
+  display: inline;
+}
 </style>
 
 <script>
+import Loader from 'vue-spinner/src/PulseLoader.vue'
+import swal from 'sweetalert2'
 import moment from 'moment'
 import axios from 'axios'
 import $ from 'jquery'
 export default {
+  components: {
+    Loader
+  },
   data() {
     return {
+        loading: false,
+          loaderColor: '#fff',
+          loaderSize: '6px',
       flyer: {},
       Tickets: [],
       intendedQty: 1,
@@ -155,16 +167,80 @@ export default {
     },
 
     submitPurchaseDiag: function (e) {
+      this.loading = true
       let rawData = this.intendedPurchase
       rawData.qty = this.intendedQty
       let data = {
         purchaseInfo: rawData,
       }
+
       axios.create({
         withCredentials: true
       }).post(process.env.VUE_APP_API_URL+'/tickets/'+this.flyer._id+'/purchase', data).then((response) => {
-        console.log(response);
+        this.loading = false
+        // console.log(response);
+        if (response.data.success) {
+          $('#purchaseTicketDiag').modal('hide')
+          swal({
+            title: 'Purchase Succesful',
+            text: 'Your tickets ready :)',
+            type: 'success'
+          })
+        } else {
+          $('#purchaseTicketDiag').modal('hide')
+          swal({
+            title: response.data.message,
+            text: response.data.error.message,
+            type: 'error'
+          })
+        }
+      }).catch((e) => {
+        this.loading = false
+        swal({
+          title: 'Network Error',
+          text: e.message,
+          type: 'error'
+        })
       })
+    },
+
+    updateTickets: function (notificationData) {
+      let tempArray = this.Tickets
+      for (var i = 0; i < tempArray.length; i++) {
+        if (tempArray[i]._id == notificationData._id) {
+          console.log("inside it");
+          tempArray.splice(i, 1, notificationData)
+        }
+      }
+      this.Tickets = tempArray
+    }
+  },
+
+  sockets: {
+    customerNotifications(data){
+      switch (data.to) {
+        case "all":
+        // console.log(data);
+          switch (data.message) {
+            case "Ticket Sold":
+              this.updateTickets(data.redis.data.TicketInfo)
+              break;
+            default:
+          }
+          break;
+
+          case this.$store.state.user.email:
+          switch (data.message) {
+            case "Ticket Bought":
+            console.log(data);
+              this.$store.dispatch('UpdatePurchasedTickets', data.redis.data.PurchaseOrder)
+              break;
+            default:
+
+          }
+          break;
+        default:
+      }
     }
   }
 }
