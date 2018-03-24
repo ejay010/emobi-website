@@ -18,6 +18,10 @@
         Manage Tickets
     </button>
 
+    <router-link class="btn btn-success btn-sm" :to="{ name: 'QrReader', params: {eventId: customerEvent._id} }">
+      <icon name="qrcode" style="vertical-align:middle;"></icon>
+    Redeem Ticket/Voucher</router-link>
+
   </div>
   <div class="d-flex w-100 justify-content-between">
     <h5 class="mb-1">{{customerEvent.title}}</h5>

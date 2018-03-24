@@ -20,10 +20,6 @@
             <icon name="plus" style="vertical-align:middle;"></icon>
             Create a new Event
           </button>
-
-          <router-link class="btn btn-success btn-sm" :to="{ name: 'QrReader', params: {} }">
-            <icon name="qrcode" style="vertical-align:middle;"></icon>
-          Redeem Ticket/Voucher</router-link>
         </span>
         <hr />
         <div class="list-group">

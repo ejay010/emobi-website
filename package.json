@@ -8,8 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "awesome-qr": "^1.2.0",
     "axios": "^0.17.1",
     "bootstrap": "^4.0.0",
+    "canvas": "^1.6.10",
     "connect-history-api-fallback": "^1.5.0",
     "del": "^3.0.0",
     "dotenv": "^5.0.0",
@@ -23,6 +25,7 @@
     "vue": "^2.5.13",
     "vue-awesome": "^2.3.4",
     "vue-qart": "^2.1.1",
+    "vue-qr": "^1.2.8",
     "vue-qrcode-reader": "^0.7.1",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^2.1.1-b",
