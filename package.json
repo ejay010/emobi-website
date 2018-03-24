@@ -11,7 +11,6 @@
     "awesome-qr": "^1.2.0",
     "axios": "^0.17.1",
     "bootstrap": "^4.0.0",
-    "canvas": "^1.6.10",
     "connect-history-api-fallback": "^1.5.0",
     "del": "^3.0.0",
     "dotenv": "^5.0.0",
