@@ -20,8 +20,8 @@ export default {
     onDecode: function (content) {
       axios.create({
         withCredentials: true
-      }).get(process.env.VUE_APP_API_URL+'/purchaseOrder/'+this.router.params.eventId+'/'+content+'/redeem').then((response) => {
-        console.log(response.data);
+      }).get(process.env.VUE_APP_API_URL+'/purchaseOrder/'+this.$route.params.eventId+'/'+content+'/redeem').then((response) => {
+
       })
       swal({
         title: 'Camera Found this',
