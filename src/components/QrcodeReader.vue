@@ -21,7 +21,7 @@ export default {
       axios.create({
         withCredentials: true
       }).get(process.env.VUE_APP_API_URL+'/purchaseOrder/'+this.$route.params.eventId+'/'+content+'/redeem').then((response) => {
-
+        console.log(response);
       })
       swal({
         title: 'Camera Found this',
