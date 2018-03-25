@@ -25,7 +25,7 @@ export default {
           if (response.data.message == "Redemption Successful") {
             swal({
               title: response.data.message,
-              text: response.data.data.qty_available+ 'of' + response.data.data.resolved_qty,
+              text: response.data.data.qty_available+ ' of ' + response.data.data.resolved_qty+ ' available.',
               type: 'success'
             })
           }
