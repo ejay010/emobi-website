@@ -44,7 +44,7 @@
                         <h5 class="modal-title">{{PO.ticketId.title}}</h5>
                     </div>
                     <div class="modal-body text-center">
-                      <vqr :config="qrconfig" ></vqr>
+                      <vqr :code="qrconfig.value"></vqr>
                     </div>
                   </span>
               </div>
@@ -59,7 +59,7 @@
 
 <script>
 import $ from 'jquery'
-import vqr from 'vue-qart'
+import vqr from './Utilities/qrcodeGen.vue'
 export default {
   components: {
     vqr

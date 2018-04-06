@@ -13,6 +13,8 @@ import Qrcodereader from '../components/QrcodeReader.vue'
 import EventView from '../components/EventView.vue'
 import TicketManager from '../components/TicketManager.vue'
 
+import TestComponent from '../components/Utilities/qrcodeGen.vue'
+
 let routes = [
   {
     path: '/',
@@ -23,6 +25,10 @@ let routes = [
     path: '/login',
     name: 'CustomerLogin',
     component: CustomerLogin
+  },
+  {
+    path: '/test',
+    component: TestComponent
   },
   {
     path: '/Register',

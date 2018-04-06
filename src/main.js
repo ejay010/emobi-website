@@ -12,6 +12,8 @@ import VueSocketio from 'vue-socket.io'
 Vue.use(VueSocketio, io(process.env.VUE_APP_API_URL, {secure: true}))
 import App from './App.vue'
 
+
+// import 'requirejs'
 import 'jquery'
 import 'bootstrap'
 import Icon from 'vue-awesome/components/Icon'

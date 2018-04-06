@@ -1,6 +1,8 @@
 <template>
-  <div class="card">
-      <qrcode-reader class="card-img" @decode="onDecode"></qrcode-reader>
+  <div class="card" :class="located">
+    <span class="p-3">
+      <qrcode-reader class="card-img" @decode="onDecode" @locate="onLocate"></qrcode-reader>
+    </span>
   </div>
 </template>
 
@@ -16,7 +18,34 @@ export default {
   components: {
     QrcodeReader
   },
+  data: function () {
+    return {
+      found: false
+    }
+  },
+  computed: {
+    located: function () {
+      if (this.found) {
+        return {
+          'text-white': true,
+          'bg-success': true,
+        }
+      } else {
+        return {
+          'text-white': true,
+          'bg-danger': true
+        }
+      }
+    }
+  },
   methods: {
+    onLocate: function (points) {
+      if (points.length > 0) {
+        this.found = true
+      } else {
+        this.found = false
+      }
+    },
     onDecode: function (content) {
       axios.create({
         withCredentials: true
