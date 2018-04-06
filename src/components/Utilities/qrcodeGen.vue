@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <img v-bind:src="qrcodeImg"></img>
+    <img v-bind:src="qrcodeImg" class="img-fluid"></img>
   </div>
 </template>
 
