@@ -13,7 +13,7 @@ import Qrcodereader from '../components/QrcodeReader.vue'
 import EventView from '../components/EventView.vue'
 import TicketManager from '../components/TicketManager.vue'
 
-import TestComponent from '../components/Utilities/qrcodeGen.vue'
+import TestComponent from '../components/Utilities/GoogleMapComponent.vue'
 
 let routes = [
   {
@@ -39,46 +39,54 @@ let routes = [
     path: '/customer/:email',
     name: 'Customer',
     component: Customer,
+    meta: { requiresAuth: true },
     children: [
       {
         path:'profile',
         name: 'CustomerProfile',
-        component: CustomerProfile
+        component: CustomerProfile,
+        meta: { requiresAuth: true },
       },
       {
         path:'events',
         name: 'CustomerEvents',
         component: CustomerEvents,
+        meta: { requiresAuth: true },
         children: [
           {
             path:'manageTickets/:eventId',
             name: 'ManageTickets',
             component: TicketManager,
-            props: true
+            props: true,
+            meta: { requiresAuth: true },
           },
           {
             path: 'eventlist',
             name: 'CustomerEventList',
             component: CustomerEventList,
+            meta: { requiresAuth: true }
           },
           {
             path: 'scanTicket',
             name: 'QrReader',
-            component: Qrcodereader
+            component: Qrcodereader,
+            meta: { requiresAuth: true },
           }
         ]
       },
       {
         path: 'tickets',
         name: 'CustomerTickets',
-        component: CustomerTickets
+        component: CustomerTickets,
+        meta: { requiresAuth: true },
       }
     ]
   },
   {
     path: '/customer/:email/edit/:eventkey',
     name: 'EditEvent',
-    component: EditEvent
+    component: EditEvent,
+    meta: { requiresAuth: true },
   },
   {
     path: '/publicEvent/:email/:eventkey',

@@ -10,6 +10,14 @@ import store from './store'
 import io from 'socket.io-client'
 import VueSocketio from 'vue-socket.io'
 Vue.use(VueSocketio, io(process.env.VUE_APP_API_URL, {secure: true}))
+
+import * as VueGoogleMaps from 'vue2-google-maps'
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyBWHQ59vmmjxOlAegYTWr0ndFIu4zyeFnE',
+    libraries: 'places'
+  }
+})
 import App from './App.vue'
 
 
@@ -25,6 +33,22 @@ Vue.config.productionTip = false
 const router = new VueRouter({
   routes: routes,
   linkActiveClass: 'active'
+})
+import axios from 'axios'
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.state.user.email != null) {
+      next()
+    } else {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    }
+  } else {
+    next()
+  }
+  next()
 })
 
 new Vue({

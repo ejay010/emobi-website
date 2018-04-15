@@ -91,7 +91,11 @@ export default {
           }).then((result) => {
             if (result.dismiss == "timer") {
               // TODO: update navigation bar, redirect to home.
-              this.$router.push({ name: 'HomePage'})
+              if (this.$route.query.redirect != null) {
+                this.$router.push(this.$route.query.redirect)
+              } else {
+                this.$router.push({ name: 'HomePage'})                
+              }
             }
           })
         }

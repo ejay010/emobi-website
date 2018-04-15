@@ -42,6 +42,9 @@ export default {
   // components: {
   //   EventsPage
   // },
+  mounted: function () {
+    this.$router.push({name: 'CustomerTickets'})
+  },
   sockets: {
     customerNotifications (data) {
       // console.log(data);

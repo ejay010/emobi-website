@@ -159,14 +159,17 @@
             </div>
             <div class="form-group" v-if="existingFlyer.exists">
                 <label for="currentflyer" v-if="existingFlyer.exists">Current Flyer</label>
-                <img class="card" v-if="existingFlyer.exists" v-bind:src="existingFlyer.src" name="currentflyer" id="currentflyer"/>
+                <img class="img-thumbnail" v-if="existingFlyer.exists" v-bind:src="existingFlyer.src" name="currentflyer" id="currentflyer"/>
             </div>
             <div class="form-group">
                 <label for="flyer" v-if="existingFlyer.exists">Change Flyer</label>
                 <label for="flyer" v-else>The Flyer</label>
               <input type="file" name="flyer" id="flyer" class="form-control" v-on:change="fileSelected" accept="image/*"/>
             </div>
-
+            <div class="form-group">
+                <label for="location">Set Location</label>
+                <googleMap @location_Changed="updateLocationData"></googleMap>
+            </div>
             <div class="from-group">
               <label for="eventDescription">Event Description</label>
               <textarea name="eventDescription" id="eventDescription" class="form-control" v-model="eventObj.description"></textarea>
@@ -185,10 +188,16 @@
 import axios from 'axios'
 import moment from 'moment'
 import swal from 'sweetalert2'
+import googleMap from './Utilities/GoogleMapComponent.vue'
 export default {
+  components: {
+    googleMap
+  },
   data() {
     return {
+      errors: [],
       user: this.$store.state.user,
+      location: {},
       eventObj: {},
       imageFile: {},
       startTime: {
@@ -387,6 +396,10 @@ export default {
   fileSelected(evt){
     let image = evt.target.files || evt.dataTransfer.files
     this.imageFile = image
+  },
+
+  updateLocationData: function (data){
+    this.location = JSON.stringify(data)
   },
 
     submitChanges(){

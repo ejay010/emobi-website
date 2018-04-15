@@ -36,6 +36,15 @@
         <div class="col-sm-4">
           <div class="card">
               <div class="card-header">
+                  <h5>Location</h5>
+              </div>
+              <div class="card-body">
+                  <googleMap :showAutoComplete="false" :mapStyle="mapStyle" :MapMarker="locationData.geometry" :zoom="10"></googleMap>
+              </div>
+          </div>
+
+          <div class="card">
+              <div class="card-header">
                   <h5>Tickets</h5>
               </div>
               <div class="card-body"  v-if="Tickets.length == 0">
@@ -84,6 +93,23 @@
           </div>
       </div>
   </div>
+
+  <div class="modal" tabindex="-1" role="dialog" id="loginDiag">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Sign In Or Register</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-content">
+                  <button class="btn btn-primary" @click="moveToSignIn">Sign In</button>
+                  <button class="btn btn-secondary" @click="moveToRegister">Register</button>
+              </div>
+          </div>
+      </div>
+  </div>
   </span>
 </template>
 
@@ -95,16 +121,22 @@
 
 <script>
 import Loader from 'vue-spinner/src/PulseLoader.vue'
+import googleMap from './Utilities/GoogleMapComponent.vue'
 import swal from 'sweetalert2'
 import moment from 'moment'
 import axios from 'axios'
 import $ from 'jquery'
 export default {
   components: {
-    Loader
+    Loader,
+    googleMap
   },
   data() {
     return {
+      mapStyle: {
+        width: '100%',
+        height: '400px'
+      },
         loading: false,
           loaderColor: '#fff',
           loaderSize: '6px',
@@ -147,8 +179,23 @@ export default {
     finishTime(){
       return moment.utc(this.flyer.finishTime).local().format("dddd, MMMM Do YYYY, h:mm a")
     },
+    locationData(){
+      if (this.flyer.location != null) {
+        return JSON.parse(this.flyer.location)
+      } else {
+        return {}
+      }
+    }
   },
   methods: {
+    moveToSignIn: function () {
+      $('#loginDiag').modal('hide')
+      this.$router.push({name: "CustomerLogin"})
+    },
+    moveToRegister: function () {
+      $('#loginDiag').modal('hide')
+      this.$router.push({name: "CustomerRegister"})
+    },
     openPurchaseDiag: function (ticketDetails){
       let info = {}
       if (this.$store.state.user.email) {
@@ -161,7 +208,7 @@ export default {
         this.intendedPurchase = info
         $('#purchaseTicketDiag').modal('show')
       } else {
-        alert("Please log in")
+        $('#loginDiag').modal('show')
         info = {}
       }
     },
