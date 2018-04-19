@@ -75,6 +75,9 @@ export default {
             default:
             console.log(response);
           }
+        } else {
+          console.log('communication error');
+          console.log(response);
         }
       })
     }
