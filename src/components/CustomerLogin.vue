@@ -23,13 +23,13 @@
             <hr/>
 
             <div class="text-center mb-1">
-              <button type="submit" class="btn btn-success btn-lg btn-block" :disabled="loading">Sign In
+              <button type="submit" class="btn btn-success btn-sm btn-block" :disabled="loading">Sign In
                 <loader class="button-loader" :loading="loading" :color="loaderColor" :size="loaderSize"></loader>
               </button>
             </div>
           </form>
           <div class="text-center">
-            <router-link :to="{ name: 'CustomerRegister', params: {} }" class="btn btn-outline-secondary btn-lg btn-block" :class="{disabled: loading}">Sign Up</router-link>
+            <router-link :to="{ name: 'CustomerRegister', params: {} }" class="btn btn-outline-secondary btn-sm btn-block" :class="{disabled: loading}">Sign Up</router-link>
           </div>
         </div>
     </div>
