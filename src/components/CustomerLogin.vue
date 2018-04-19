@@ -77,6 +77,7 @@ export default {
     submitLoginData(){
       this.loading = true
       this.$store.dispatch('LoginUser', this.$data).then(response => {
+        console.log(response);
         this.loading = false
         if (response.success) {
           this.$store.dispatch('loadTickets')
