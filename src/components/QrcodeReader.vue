@@ -56,14 +56,24 @@ export default {
         withCredentials: true
       }).get(process.env.VUE_APP_API_URL+'/purchaseOrder/'+this.$route.params.eventId+'/'+content+'/redeem').then((response) => {
         console.log('post response');
-        console.log(response);
         if (response.data.success) {
-          if (response.data.message == "Redemption Successful") {
+          switch (response.data.message) {
+            case "Tickets Exhausted":
+            swal({
+              title: response.data.message,
+              text: 'This ticket is exhausted :('
+              type: 'warning'
+            })
+            break;
+            case "Redemption Successful":
             swal({
               title: response.data.message,
               text: response.data.data.qty_available+ ' of ' + response.data.data.resolved_qty+ ' available.',
               type: 'success'
             })
+              break;
+            default:
+            console.log(response);
           }
         }
       })
