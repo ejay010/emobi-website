@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import NavigationBar from './components/NavigationBar.vue'
 export default {
 
