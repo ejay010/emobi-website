@@ -1,5 +1,8 @@
 <template>
   <div class="card" :class="located">
+    <div class="alert alert-warning" role="alert">
+        Please allow e-mobie to access your devices' camera.
+    </div>
     <span class="p-3">
       <qrcode-reader class="card-img" @decode="onDecode" @locate="onLocate"></qrcode-reader>
     </span>
