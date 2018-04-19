@@ -47,9 +47,13 @@ export default {
       }
     },
     onDecode: function (content) {
+      console.log('here is the image content');
+      console.log(content);
       axios.create({
         withCredentials: true
       }).get(process.env.VUE_APP_API_URL+'/purchaseOrder/'+this.$route.params.eventId+'/'+content+'/redeem').then((response) => {
+        console.log('post response');
+        console.log(response);
         if (response.data.success) {
           if (response.data.message == "Redemption Successful") {
             swal({
