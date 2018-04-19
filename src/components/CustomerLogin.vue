@@ -1,7 +1,7 @@
 <template>
 <div class="container pt-5">
-<div class="row">
-  <div class="col-6 offset-3">
+<div class="row justify-content-center">
+  <div class="col-6">
     <div v-show="!validCreds" :class="wrongCreds" role="alert">
       Username or password not found...
     </div>
@@ -94,7 +94,7 @@ export default {
               if (this.$route.query.redirect != null) {
                 this.$router.push(this.$route.query.redirect)
               } else {
-                this.$router.push({ name: 'HomePage'})                
+                this.$router.push({ name: 'HomePage'})
               }
             }
           })
