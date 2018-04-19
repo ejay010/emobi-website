@@ -61,7 +61,7 @@ export default {
             case "Tickets Exhausted":
             swal({
               title: response.data.message,
-              text: 'This ticket is exhausted :('
+              text: 'This ticket is exhausted :(',
               type: 'warning'
             })
             break;
