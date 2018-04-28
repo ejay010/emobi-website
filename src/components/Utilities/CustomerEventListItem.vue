@@ -22,6 +22,9 @@
       <icon name="qrcode" style="vertical-align:middle;"></icon>
     Redeem Ticket/Voucher</router-link>
 
+    <button class="btn btn-danger btn-sm" @click="DeleteEvent">
+      Delete
+    </button>
   </div>
   <div class="d-flex w-100 justify-content-between">
     <h5 class="mb-1">{{customerEvent.title}}</h5>
@@ -47,14 +50,19 @@ import swal from 'sweetalert2'
     ],
     computed: {
       published(){
-        if (this.customerEvent.status == 'published') {
-          return true
-        } else {
-          return false
+        if (this.customerEvent != null) {
+          if (this.customerEvent.status == 'published') {
+            return true
+          } else {
+            return false
+          }
         }
       }
     },
     methods: {
+      DeleteEvent: function () {
+        this.$store.dispatch('DeleteEvent', this.customerEvent)
+      },
       ManageTickets(){
         this.$router.push({name: 'ManageTickets', params: { eventId: this.customerEvent._id }})
       },

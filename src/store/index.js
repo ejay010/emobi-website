@@ -36,6 +36,41 @@ export default new Vuex.Store({
   },
   // actions
   actions: {
+    RemoveEvent (context, eventkey){
+      let currentEvents = context.state.events
+      let current_position = currentEvents.find(function(array_element) {
+        if (array_element._id == eventkey) {
+          return true
+        }
+      })
+      let deleted_elements = currentEvents.splice(current_position, 1)
+      if (deleted_elements.length > 0) {
+        context.commit('updateEvents', currentEvents)
+      }
+    },
+    DeleteEvent (context, customerEvent){
+      return new Promise((resolve, reject) => {
+        axios.create({
+          withCredentials: true
+        }).get(process.env.VUE_APP_API_URL+'/events/'+customerEvent._id+'/delete').then(response => {
+          if (response.data.success) {
+            let currentEvents = context.state.events
+            let current_position = currentEvents.find(function(array_element) {
+              if (array_element._id == response.data._id) {
+                return true
+              }
+            })
+            let deleted_elements = currentEvents.splice(current_position, 1)
+            if (deleted_elements.length > 0) {
+              context.commit('updateEvents', currentEvents)
+            }
+          }
+          resolve(response.data)
+        }).catch(e => {
+            reject(e)
+        })
+      })
+    },
     LoginUser (context, userData) {
       // created my first promise
       return new Promise((resolve, reject) => {
@@ -200,13 +235,49 @@ export default new Vuex.Store({
           axios.create({
             withCredentials: true
           }).get(url).then(response => {
-            // console.log(response);
+            console.log(response);
             resolve(response)
           }).catch(e => {
             reject(e)
           })
         }
       )
+    },
+
+    DeleteEventTicket (context, ticket) {
+      let url = process.env.VUE_APP_API_URL+'/events/'+ticket.eventId+'/ticket/'+ticket._id+'/deleteTicket'
+      return new Promise((resolve, reject) => {
+        axios.create({
+          withCredentials: true
+        }).get(url).then(response => {
+          resolve (response)
+        }).catch(e => {
+          reject (e)
+        })
+      })
+    },
+
+    DropEventTicket (context, ticket) {
+      let current_tickets = context.state.CreatedTickets
+      let current_ticket_position = current_tickets.findIndex((element) => {
+        if (element._id == ticket._id) {
+          return true
+        } else {
+          return false
+        }
+      })
+
+      if (current_ticket_position != -1) {
+        current_tickets.splice(current_ticket_position, 1)
+        context.commit('UpdateCreatedTickets', current_tickets)
+        return {
+          success: true,
+        }
+      } else {
+        return {
+          success: false
+        }
+      }
     }
   },
 /* eslint-enable no-console */

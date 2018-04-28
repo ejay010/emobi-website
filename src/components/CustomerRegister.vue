@@ -83,8 +83,13 @@ export default {
                 type: 'success'
               }).then((result) => {
                 if (result.value) {
-                  // TODO: after succcesful registration, instead of redirecting to login screen, redirect to home screen with user set
-                  this.$router.push('CustomerLogin')
+                  this.$store.dispatch('LoginUser', this.$data).then(response => {
+                    if (response.success) {
+                      this.$store.dispatch('loadTickets')
+                      this.$store.dispatch('loadPurchasedTickets')
+                      this.$router.push({name: 'HomePage'})
+                    }
+                  })
                 }
               })
             } else {

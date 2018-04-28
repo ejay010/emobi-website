@@ -1,7 +1,7 @@
 <template>
 <div class="container">
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-12 m-2">
       <div class="card">
         <h3 class="card-header">
           {{ eventObj.title }}

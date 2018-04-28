@@ -1,5 +1,5 @@
 <template>
-  <span id="app">
+<span id="app">
     <NavigationBar></NavigationBar>
     <router-view></router-view>
   </span>
@@ -15,12 +15,12 @@ export default {
     NavigationBar,
     // Customer,
   },
-  created: function () {
+  created: function() {
     this.$store.dispatch('loadEvents')
   },
   /* eslint-disable no-console */
   sockets: {
-    customerNotifications(data){
+    customerNotifications(data) {
       // console.log(data);
       switch (data.to) {
         case "all":
@@ -28,14 +28,17 @@ export default {
             case "Event Published":
               this.$store.dispatch('UpdateEvents', data.redis.data)
               break;
-              case "Event Canceled":
+            case "Event Canceled":
               this.$store.dispatch('UpdateEvents', data.redis.data)
               break;
-              case "Event Updated":
+            case "Event Updated":
               this.$store.dispatch('UpdateEvents', data.redis.data)
+              break;
+            case "Event Deleted":
+              this.$store.dispatch('RemoveEvent', data.redis.key)
               break;
             default:
-
+              console.log(data);
           }
           break;
         default:
@@ -57,8 +60,8 @@ export default {
   color: #2c3e50;
   /* margin-top: 60px; */
 }
+
 #content {
   margin-top: 60px;
 }
-
 </style>

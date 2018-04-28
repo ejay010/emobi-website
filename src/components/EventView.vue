@@ -47,11 +47,11 @@
               <div class="card-header">
                   <h5>Tickets</h5>
               </div>
-              <div class="card-body"  v-if="Tickets.length == 0">
+              <div class="card-body"  v-if="tickets.length == 0">
                     <p>None Avaiable</p>
                   </div>
                     <div class="list-group" v-else>
-                        <a class="list-group-item list-group-item-action" v-for="ticket in Tickets" :key="ticket._id" v-on:click="openPurchaseDiag(ticket)">
+                        <a class="list-group-item list-group-item-action" v-for="ticket in tickets" :key="ticket._id" v-on:click="openPurchaseDiag(ticket)">
                           <div class="media">
                               <div class="media-body">
                                 <h5 class="mt-0">{{ticket.title}} | <small>{{ticket.paid_or_free}}</small></h5>
@@ -141,7 +141,6 @@ export default {
           loaderColor: '#fff',
           loaderSize: '6px',
       flyer: {},
-      Tickets: [],
       intendedQty: 1,
       intendedPurchase: {
         ticket: {},
@@ -154,8 +153,6 @@ export default {
     this.$store.dispatch('findPublicEvent', this.$route.params).then((response) => {
       this.flyer = response.data;
     })
-
-
 
   },
   computed: {
@@ -184,6 +181,17 @@ export default {
         return JSON.parse(this.flyer.location)
       } else {
         return {}
+      }
+    },
+    tickets(){
+      if (this.flyer.tickets != null) {
+        if (this.flyer.tickets.length > 0) {
+          return this.flyer.tickets
+        } else {
+          return []
+        }
+      } else {
+        return []
       }
     }
   },

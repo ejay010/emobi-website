@@ -46,7 +46,9 @@
     "presets": [
       "@vue/app"
     ],
-    "plugins": ["js-logger"]
+    "plugins": [
+      "js-logger"
+    ]
   },
   "eslintConfig": {
     "root": true,
