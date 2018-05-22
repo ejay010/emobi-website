@@ -45,11 +45,11 @@
 <script>
 export default {
   computed: {
-    LoggedIn (){
+    LoggedIn() {
       return this.$store.getters.userLoggedIn
     },
-    customer (){
-      return this.$store.state.user;
+    customer() {
+      return this.$store.state.user.user;
     }
   },
 }

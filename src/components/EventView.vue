@@ -1,5 +1,5 @@
 <template>
-  <span>
+<span>
   <div class="container-fluid p-3">
     <div class="row">
         <div class="col-md">
@@ -67,50 +67,25 @@
     </div>
     </div>
   </div>
-  <div class="modal" tabindex="-1" role="dialog" id="purchaseTicketDiag">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title">Purchase {{intendedPurchase.ticket.title}}</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-              </div>
-              <form v-on:submit.prevent="submitPurchaseDiag">
-                <div class="modal-body">
-                  <div class="form-group">
-                      <label for="qty">How much tickets?</label>
-                      <input type="number" min="1" step="1" class="form-control" name="qty" id="qty" v-model="intendedQty" />
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary" :disabled="loading">Make Purchase
-                    <loader class="button-loader" :loading="loading" :color="loaderColor" :size="loaderSize"></loader>
-                  </button>
-        <button type="reset" class="btn btn-secondary" data-dismiss="modal" :disabled="loading">Close</button>
-                </div>
-              </form>
-          </div>
-      </div>
-  </div>
+  <TicketGrappler :purchase="intendedPurchase"></TicketGrappler>
 
-  <div class="modal" tabindex="-1" role="dialog" id="loginDiag">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title">Sign In Or Register</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<div class="modal" tabindex="-1" role="dialog" id="loginDiag">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Sign In Or Register</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                  </button>
-              </div>
-              <div class="modal-content">
-                  <button class="btn btn-primary" @click="moveToSignIn">Sign In</button>
-                  <button class="btn btn-secondary" @click="moveToRegister">Register</button>
-              </div>
-          </div>
-      </div>
-  </div>
-  </span>
+</button>
+</div>
+<div class="modal-content">
+  <button class="btn btn-primary" @click="moveToSignIn">Sign In</button>
+  <button class="btn btn-secondary" @click="moveToRegister">Register</button>
+</div>
+</div>
+</div>
+</div>
+</span>
 </template>
 
 <style>
@@ -125,11 +100,13 @@ import googleMap from './Utilities/GoogleMapComponent.vue'
 import swal from 'sweetalert2'
 import moment from 'moment'
 import axios from 'axios'
+import TicketGrappler from './Utilities/TicketGrappler.vue'
 import $ from 'jquery'
 export default {
   components: {
     Loader,
-    googleMap
+    googleMap,
+    TicketGrappler
   },
   data() {
     return {
@@ -137,11 +114,11 @@ export default {
         width: '100%',
         height: '400px'
       },
-        loading: false,
-          loaderColor: '#fff',
-          loaderSize: '6px',
-      flyer: {},
+      loading: false,
+      loaderColor: '#fff',
+      loaderSize: '6px',
       intendedQty: 1,
+      initTicketGrappler: false,
       intendedPurchase: {
         ticket: {},
         eventId: "",
@@ -150,78 +127,74 @@ export default {
     }
   },
   created: function() {
-    this.$store.dispatch('findPublicEvent', this.$route.params).then((response) => {
-      this.flyer = response.data;
-    })
-
+    this.$store.dispatch('findPublicEvent', this.$route.params)
   },
   computed: {
-    flyerImg(){
-      if (this.flyer.flyer) {
-        this.flyer.flyer = JSON.parse(this.flyer.flyer)
-        this.flyer.flyer.src = process.env.VUE_APP_API_URL+'/'+this.flyer.flyer.filename+'-'+this.flyer.flyer.originalname
-
-        axios.get(process.env.VUE_APP_API_URL+'/tickets/'+this.flyer._id+'/fetch').then((response) => {
-          this.Tickets = response.data.AvailableTickets
-        })
-
-        return this.flyer.flyer.src
-      }
-      return null
+    flyer() {
+      return this.$store.state.EventView.flyer
     },
-    StartTime(){
-      // return this.flyer.content.startTime
+    tickets() {
+      return this.$store.getters.tickets
+    },
+    flyerImg() {
+      if (this.$store.getters.flyerImg != null) {
+        return this.$store.getters.flyerImg.src
+      }
+      return "#"
+    },
+    StartTime() {
       return moment.utc(this.flyer.startTime).local().format("dddd, MMMM Do YYYY, h:mm a")
     },
-    finishTime(){
+    finishTime() {
       return moment.utc(this.flyer.finishTime).local().format("dddd, MMMM Do YYYY, h:mm a")
     },
-    locationData(){
+    locationData() {
       if (this.flyer.location != null) {
         return JSON.parse(this.flyer.location)
       } else {
         return {}
       }
     },
-    tickets(){
-      if (this.flyer.tickets != null) {
-        if (this.flyer.tickets.length > 0) {
-          return this.flyer.tickets
-        } else {
-          return []
-        }
-      } else {
-        return []
-      }
-    }
   },
   methods: {
-    moveToSignIn: function () {
+    moveToSignIn: function() {
       $('#loginDiag').modal('hide')
-      this.$router.push({name: "CustomerLogin"})
+      this.$router.push({
+        name: "CustomerLogin"
+      })
     },
-    moveToRegister: function () {
+    moveToRegister: function() {
       $('#loginDiag').modal('hide')
-      this.$router.push({name: "CustomerRegister"})
+      this.$router.push({
+        name: "CustomerRegister"
+      })
     },
-    openPurchaseDiag: function (ticketDetails){
-      let info = {}
-      if (this.$store.state.user.email) {
-        info = {
-          ticket: ticketDetails,
-          eventId: ticketDetails.eventId,
-          purchaser: this.$store.state.user.email,
-        }
+    openPurchaseDiag: function(ticketDetails) {
+      if (ticketDetails.quantity_available > 0) {
+        let info = {}
+        if (this.$store.state.user.user.email) {
+          info = {
+            ticket: ticketDetails,
+            eventId: ticketDetails.eventId,
+            purchaser: this.$store.state.user.user.email,
+          }
 
-        this.intendedPurchase = info
-        $('#purchaseTicketDiag').modal('show')
+          this.intendedPurchase = info
+          $('#purchaseTicketDiag').modal('show')
+        } else {
+          $('#loginDiag').modal('show')
+          info = {}
+        }
       } else {
-        $('#loginDiag').modal('show')
-        info = {}
+        swal({
+          title: "Sold Out :O",
+          text: "Sorry that ticket is sold out",
+          type: "warning"
+        })
       }
     },
 
-    submitPurchaseDiag: function (e) {
+    submitPurchaseDiag: function(e) {
       this.loading = true
       let rawData = this.intendedPurchase
       rawData.qty = this.intendedQty
@@ -231,9 +204,8 @@ export default {
 
       axios.create({
         withCredentials: true
-      }).post(process.env.VUE_APP_API_URL+'/tickets/'+this.flyer._id+'/purchase', data).then((response) => {
+      }).post(process.env.VUE_APP_API_URL + '/tickets/' + this.flyer._id + '/purchase', data).then((response) => {
         this.loading = false
-        // console.log(response);
         if (response.data.success) {
           $('#purchaseTicketDiag').modal('hide')
           swal({
@@ -259,11 +231,10 @@ export default {
       })
     },
 
-    updateTickets: function (notificationData) {
+    updateTickets: function(notificationData) {
       let tempArray = this.Tickets
       for (var i = 0; i < tempArray.length; i++) {
         if (tempArray[i]._id == notificationData._id) {
-          console.log("inside it");
           tempArray.splice(i, 1, notificationData)
         }
       }
@@ -272,31 +243,54 @@ export default {
   },
 
   sockets: {
-    customerNotifications(data){
+    customerNotifications(data) {
       switch (data.to) {
         case "all":
-        // console.log(data);
           switch (data.message) {
-            case "Ticket Sold":
-              this.updateTickets(data.redis.data.TicketInfo)
-              break;
-            default:
-          }
-          break;
-
-          case this.$store.state.user.email:
-          switch (data.message) {
-            case "Ticket Bought":
-            console.log(data);
-              this.$store.dispatch('UpdatePurchasedTickets', data.redis.data.PurchaseOrder)
+            case "Ticket Sale":
+              this.$store.dispatch('SaleNotice', data.sale)
               break;
             default:
 
           }
           break;
         default:
+
       }
-    }
+    },
+    ticketUpdate(data) {
+      switch (data.message) {
+        case "Ticket Deleted":
+          let current_tickets = this.flyer.tickets
+          let current_position = current_tickets.findIndex((element) => {
+            if (element._id == data.ticket._id) {
+              return true
+            } else {
+              return false
+            }
+          })
+          if (current_position != -1) {
+            current_tickets.splice(current_position, 1)
+            this.flyer.tickets = current_tickets
+          }
+          break;
+          // case "Ticket Sold":
+          //   let sold_position = this.tickets.findIndex((element) => {
+          //     if (element._id == data.ticket._id) {
+          //       return true
+          //     } else {
+          //       return false
+          //     }
+          //   })
+          //
+          //   if (sold_position != -1) {
+          //     this.tickets[sold_position].quantity_available = this.tickets[sold_position].quantity_available - data.resolved_qty
+          //   }
+          //   break;
+        default:
+
+      }
+    },
   }
 }
 </script>

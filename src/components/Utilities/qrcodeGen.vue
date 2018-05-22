@@ -1,7 +1,5 @@
 <template>
-  <div class="container">
-    <img v-bind:src="qrcodeImg" class="img-fluid"></img>
-  </div>
+<img v-bind:src="qrcodeImg" class="img-fluid"></img>
 </template>
 
 <style>
@@ -20,21 +18,27 @@ export default {
       default: 350
     }
   },
-  data: function () {
+  data: function() {
     return {
       qrcodeImg: 'http://via.placeholder.com/350x150',
     }
   },
-  mounted: function () {
+  mounted: function() {
     let awesomeqr = require('../../../public/awesome-qr/awesome-qr.js')
-    awesomeqr().create({
-      text: this.code,
-      size: this.size,
-      margin: 20,
-      callback: (data) => {
-        this.qrcodeImg = data
-      }
-    });
+    let logo = new Image()
+    logo.crossOrigin = "Anonymous"
+    logo.onload = () => {
+      awesomeqr().create({
+        text: this.code,
+        size: this.size,
+        margin: 20,
+        logoImage: logo,
+        callback: (data) => {
+          this.qrcodeImg = data
+        }
+      });
+    }
+    logo.src = "https://picsum.photos/200/?random"
   }
 }
 </script>

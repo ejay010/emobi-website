@@ -1,12 +1,18 @@
 <template>
-  <div class="card" :class="located">
-    <div class="alert alert-warning" role="alert">
-        Please allow e-mobie to access your devices' camera.
-    </div>
-    <span class="p-3">
-      <qrcode-reader class="card-img" @decode="onDecode" @locate="onLocate"></qrcode-reader>
-    </span>
+<div class="card">
+  <div class="card-header">
+    Please Scan Ticket
   </div>
+  <div class="card-body">
+    <span class="p-1">
+        <qrcode-reader class="card-img" @decode="onDecode" @locate="onLocate"></qrcode-reader>
+      </span>
+    <div class="alert alert-warning" role="alert">
+      Please allow e-mobie to access your devices' camera.
+    </div>
+    <router-link :to="{ name: 'CustomerEventList', params: {} }" class="btn btn-primary">Back to Event Menu</router-link>
+  </div>
+</div>
 </template>
 
 <style>
@@ -14,20 +20,22 @@
 </style>
 
 <script>
-import { QrcodeReader } from 'vue-qrcode-reader'
+import {
+  QrcodeReader
+} from 'vue-qrcode-reader'
 import swal from 'sweetalert2'
 import axios from 'axios'
 export default {
   components: {
     QrcodeReader
   },
-  data: function () {
+  data: function() {
     return {
       found: false
     }
   },
   computed: {
-    located: function () {
+    located: function() {
       if (this.found) {
         return {
           'text-white': true,
@@ -42,38 +50,38 @@ export default {
     }
   },
   methods: {
-    onLocate: function (points) {
+    onLocate: function(points) {
       if (points.length > 0) {
         this.found = true
       } else {
         this.found = false
       }
     },
-    onDecode: function (content) {
+    onDecode: function(content) {
       console.log('here is the image content');
       console.log(content);
       axios.create({
         withCredentials: true
-      }).get(process.env.VUE_APP_API_URL+'/purchaseOrder/'+this.$route.params.eventId+'/'+content+'/redeem').then((response) => {
+      }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + content + '/redeem').then((response) => {
         console.log('post response');
         if (response.data.success) {
           switch (response.data.message) {
             case "Tickets Exhausted":
-            swal({
-              title: response.data.message,
-              text: 'This ticket is exhausted :(',
-              type: 'warning'
-            })
-            break;
+              swal({
+                title: response.data.message,
+                text: 'This ticket is exhausted :(',
+                type: 'warning'
+              })
+              break;
             case "Redemption Successful":
-            swal({
-              title: response.data.message,
-              text: response.data.data.qty_available+ ' of ' + response.data.data.resolved_qty+ ' available.',
-              type: 'success'
-            })
+              swal({
+                title: response.data.message,
+                text: response.data.data.qty_available + ' of ' + response.data.data.resolved_qty + ' available.',
+                type: 'success'
+              })
               break;
             default:
-            console.log(response);
+              console.log(response);
           }
         } else {
           console.log('communication error');

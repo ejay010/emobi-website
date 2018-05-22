@@ -1,19 +1,19 @@
 <template>
 <div class="container pt-5">
-<div class="row justify-content-center">
-  <div class="col-6">
-    <div v-show="!validCreds" :class="wrongCreds" role="alert">
-      Username or password not found...
-    </div>
-    <div class="card">
-      <div class="card-header text-center">
-          <h5>Sign In</h5>
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <div v-show="!validCreds" :class="wrongCreds" role="alert">
+        Username or password not found...
       </div>
+      <div class="card">
+        <div class="card-header text-center">
+          <h5>Sign In</h5>
+        </div>
         <div class="card-body">
           <form v-on:submit.prevent="submitLoginData">
             <div class="from-group">
-                <label for="email">Email</label>
-                <input type="email" name="email" id="email" class="form-control" v-model="email" required/>
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email" class="form-control" v-model="email" required/>
             </div>
 
             <div class="from-group">
@@ -32,9 +32,9 @@
             <router-link :to="{ name: 'CustomerRegister', params: {} }" class="btn btn-outline-secondary btn-sm btn-block" :class="{disabled: loading}">Sign Up</router-link>
           </div>
         </div>
+      </div>
     </div>
   </div>
-</div>
 </div>
 </template>
 
@@ -52,19 +52,18 @@ export default {
   components: {
     Loader
   },
-  data: function (){
+  data: function() {
     return {
       loaderColor: '#fff',
       loaderSize: '6px',
       email: "",
       password: "",
       validCreds: true,
-      test: this.$store.state.helloTest,
       loading: false
     };
   },
   computed: {
-    wrongCreds: function () {
+    wrongCreds: function() {
       if (!this.$data.validCreds) {
         return {
           "alert": !this.$data.validCreds,
@@ -74,18 +73,16 @@ export default {
     }
   },
   methods: {
-    submitLoginData(){
+    submitLoginData() {
       this.loading = true
-      this.$store.dispatch('LoginUser', this.$data).then(response => {
-        console.log(response);
+      this.$store.dispatch('user/LoginUser', this.$data).then(response => {
         this.loading = false
         if (response.success) {
-          this.$store.dispatch('loadTickets')
-          this.$store.dispatch('loadPurchasedTickets')
-          this.$data.valdCreds = true;
+          this.$store.dispatch('user/initCustomerEvents')
+          this.$store.dispatch('user/initCustomerInvoices')
           swal({
             title: "Welcome!",
-            text: this.$store.state.user.email,
+            text: this.$store.state.user.username,
             timer: 2300,
             type: 'success',
             showConfirmButton: false
@@ -95,7 +92,9 @@ export default {
               if (this.$route.query.redirect != null) {
                 this.$router.push(this.$route.query.redirect)
               } else {
-                this.$router.push({ name: 'HomePage'})
+                this.$router.push({
+                  name: 'HomePage'
+                })
               }
             }
           })

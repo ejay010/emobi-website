@@ -8,11 +8,13 @@
 <script>
 import axios from 'axios'
 import NavigationBar from './components/NavigationBar.vue'
+import EventView from './components/EventView.vue'
 export default {
 
   name: 'app',
   components: {
     NavigationBar,
+    EventView
     // Customer,
   },
   created: function() {
@@ -38,7 +40,7 @@ export default {
               this.$store.dispatch('RemoveEvent', data.redis.key)
               break;
             default:
-              console.log(data);
+              // console.log(data);
           }
           break;
         default:

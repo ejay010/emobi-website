@@ -1,5 +1,5 @@
 <template>
-  <span>
+<span>
       <div class="container">
           <div class="jumbotron" v-if="Purchases.length <= 0">
               <h1 class="display-4">
@@ -15,23 +15,25 @@
             <p>Purchases: {{PurchaseCount}}</p>
             <hr/>
             <div class="list-group">
-                <button class="list-group-item list-group-item-action" v-for="purchase in Purchases" :key="purchase._id" v-on:click="showqr(purchase._id)">
-                  <h5>{{purchase.ticketId.title}}</h5>
-                  <dl class="dl-horizontal">
-                      <dt>Event</dt>
-                      <dd>{{purchase.eventId.title}}</dd>
-                      <dt>Quantity</dt>
-                      <dd>{{purchase.resolved_qty}}</dd>
-                  </dl>
-                </button>
+              <router-link v-for="purchase in Purchases" :key="purchase._id" :to="{ name: 'FindInvoice', params: { invoiceId: purchase._id} }"
+              class="list-group-item list-group-item-action"
+              >
+                <h5 v-if="purchase.ticketId != null">{{purchase.ticketId.title}}</h5>
+                <h5 v-else>N/A</h5>
+                <dl class="dl-horizontal">
+                    <dt>Event</dt>
+                    <dd v-if="purchase.eventId != null">{{purchase.eventId.title}}</dd>
+                    <dd v-else>N/A</dd>
+                </dl>
+              </router-link>
             </div>
           </span>
-      </div>
+</div>
 
-      <div class="modal fade" tabindex="-1" role="dialog" id="qrcodebox">
-          <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <span v-if="!PO">
+<div class="modal fade" tabindex="-1" role="dialog" id="qrcodebox">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <span v-if="!PO">
                   <div class="modal-header">
                       <h5 class="modal-title"></h5>
                   </div>
@@ -39,18 +41,19 @@
 
                   </div>
                 </span>
-                  <span v-else>
+      <span v-else>
                     <div class="modal-header">
-                        <h5 class="modal-title">{{PO.ticketId.title}}</h5>
+                        <h5 class="modal-title" v-if="PO.ticketId != null">{{PO.ticketId.title}}</h5>
+                        <h5 v-else>N/A</h5>
                     </div>
                     <div class="modal-body text-center">
                       <vqr :code="qrconfig.value"></vqr>
                     </div>
                   </span>
-              </div>
-          </div>
-      </div>
-  </span>
+    </div>
+  </div>
+</div>
+</span>
 </template>
 
 <style>
@@ -59,22 +62,22 @@
 
 <script>
 import $ from 'jquery'
-import vqr from './Utilities/qrcodeGen.vue'
+import vqr from '../../Utilities/qrcodeGen.vue'
 export default {
   components: {
     vqr
   },
-  data: function () {
+  data: function() {
     return {
       openedTicket: null,
-      Purchases: this.$store.getters.Purchases
+      Purchases: this.$store.state.user.Invoices
     }
   },
   computed: {
-    PurchaseCount: function () {
+    PurchaseCount: function() {
       return this.Purchases.length
     },
-    PO: function () {
+    PO: function() {
       if (this.openedTicket) {
         return this.Purchases.find((element) => {
           if (element._id == this.openedTicket) {
@@ -84,7 +87,7 @@ export default {
       }
       return false
     },
-    qrconfig: function () {
+    qrconfig: function() {
       if (!this.PO) {
         return {
           value: 'notSet',
@@ -102,7 +105,7 @@ export default {
     }
   },
   methods: {
-    showqr: function (purchaseOrderId) {
+    showqr: function(purchaseOrderId) {
       this.openedTicket = purchaseOrderId
       $('#qrcodebox').modal('show')
     }

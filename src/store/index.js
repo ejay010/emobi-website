@@ -2,15 +2,18 @@ import axios from 'axios'
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
+import EventViewX from './modules/EventViewX.js'
+import CustomerViewX from '../store/modules/CustomerViewX.js'
 
 export default new Vuex.Store({
-  //state
+  modules: {
+    EventView: EventViewX,
+    user: CustomerViewX
+  },
+  //main-state
   state: {
     loggedIn: "false",
-    user: {},
-    events: [],
-    CreatedTickets: [],
-    PurchasedTickets: [],
+    PublicEvents: [],
     category: "entertainment",
   },
   //mutations alter state
@@ -21,8 +24,8 @@ export default new Vuex.Store({
     updateUser (state, updatedUser) {
       state.user = updatedUser
     },
-    updateEvents (state, updatedFlyers) {
-      state.events = updatedFlyers
+    updatePublicEvents (state, updatedFlyers) {
+      state.PublicEvents = updatedFlyers
     },
     UpdateCreatedTickets (state, updatedTickets) {
       state.CreatedTickets = updatedTickets
@@ -48,77 +51,15 @@ export default new Vuex.Store({
         context.commit('updateEvents', currentEvents)
       }
     },
-    DeleteEvent (context, customerEvent){
-      return new Promise((resolve, reject) => {
-        axios.create({
-          withCredentials: true
-        }).get(process.env.VUE_APP_API_URL+'/events/'+customerEvent._id+'/delete').then(response => {
-          if (response.data.success) {
-            let currentEvents = context.state.events
-            let current_position = currentEvents.find(function(array_element) {
-              if (array_element._id == response.data._id) {
-                return true
-              }
-            })
-            let deleted_elements = currentEvents.splice(current_position, 1)
-            if (deleted_elements.length > 0) {
-              context.commit('updateEvents', currentEvents)
-            }
-          }
-          resolve(response.data)
-        }).catch(e => {
-            reject(e)
-        })
-      })
-    },
-    LoginUser (context, userData) {
-      // created my first promise
-      return new Promise((resolve, reject) => {
-        axios.create({
-          withCredentials: true
-        }).post(process.env.VUE_APP_API_URL+'/Customer/login', userData)
-        .then(response => {
-          if (response.data.success) {
-            context.commit('updateUser', response.data.user);
-            resolve({
-              success: true,
-              status: 200,
-            })
-          }
-        })
-        .catch(e => {
-          if (e.request.status == 401) {
-            reject({
-              success: false,
-              status: 401,
-              message: "Unauthorized"
-            })
-          }
-        })
-      });
-    },
     LogoutUser (context) {
       context.commit('updateUser', {})
     },
     /* eslint-disable no-console */
     loadEvents (context){
       axios.get(process.env.VUE_APP_API_URL+'/events').then(response => {
-        context.commit('updateEvents', response.data)
+        context.commit('updatePublicEvents', response.data)
       }).catch(e => {
-        // console.log(e);
-      })
-      // context.commit('updateFlyers', flyerData)
-    },
-
-    loadTickets (context){
-      axios.get(process.env.VUE_APP_API_URL+'/tickets/'+context.state.user.email+'/tickets').then((response) => {
-        context.commit('UpdateCreatedTickets', response.data.CustomerCreatedTickets)
-      })
-    },
-
-    loadPurchasedTickets (context){
-      axios.get(process.env.VUE_APP_API_URL+'/tickets/'+context.state.user.email+'/PurchasedTickets').then((response) => {
-        context.commit('UpdatePurchasedTickets', response.data.PurchasedTickets)
+        console.log(e);
       })
     },
 
@@ -126,74 +67,12 @@ export default new Vuex.Store({
     setCategory (context, category) {
       context.commit('updateCategory', category)
     },
-    createEvent (context, baseData) {
-      let creationData = {
-        eventSeeds: baseData,
-        user: context.state.user
-      }
-      return new Promise(
-        (resolve, reject) => {
-          axios.create({
-            withCredentials: true
-          }).post(process.env.VUE_APP_API_URL+'/createEvent', creationData).then(response => {
-            resolve(response)
-          }).catch(e => {
-            reject(e)
-          })
-      });
-    },
-
-    publishEvent (context, eventID){
-      let url = process.env.VUE_APP_API_URL+'/events/'+eventID+'/publish'
-      return new Promise(
-        (resolve, reject) => {
-          axios.create({
-            withCredentials: true
-          }).get(url).then(response => {
-            // console.log(response);
-            resolve(response)
-          }).catch(e => {
-            reject(e)
-          })
-        }
-      )
-    },
-    cancelEvent (context, eventID){
-      let url = process.env.VUE_APP_API_URL+'/events/'+eventID+'/cancel'
-      return new Promise((resolve, reject) => {
-        axios.create({
-          withCredentials: true
-        }).get(url).then(response => {
-          resolve(response)
-        }).catch(e => {
-          reject(e)
-        })
-      })
-    },
 
 /* eslint-disable no-console */
-    UpdateEvents(context, eventData){
-      let currentFlyers = context.state.events
-      let currentPosition = "notFound"
-      for (var i = 0; i < currentFlyers.length; i++) {
-        if (currentFlyers[i]._id == eventData._id) {
-          currentPosition = i
-          currentFlyers.splice(i, 1)
-        }
-      }
-      if (currentPosition != "notFound") {
-        currentFlyers[currentPosition] = eventData
-      } else {
-        currentFlyers.push(eventData)
-      }
-
-      context.commit('updateEvents', currentFlyers)
-    },
 
     UpdateCreatedTickets(context, ticketData){
         let currentFlyers = context.state.CreatedTickets
         let currentPosition = "notFound"
-        // console.log(ticketData._id);
         for (var i = 0; i < currentFlyers.length; i++) {
           if (currentFlyers[i]._id == ticketData._id) {
             currentPosition = i
@@ -203,17 +82,14 @@ export default new Vuex.Store({
         if (currentPosition != "notFound") {
           currentFlyers[currentPosition] = ticketData
         } else {
-          // console.log(currentFlyers);
           currentFlyers.push(ticketData)
         }
         context.commit('UpdateCreatedTickets', currentFlyers)
     },
 
     UpdatePurchasedTickets(context, ticketData){
-      console.log(ticketData);
           let currentFlyers = context.state.PurchasedTickets
           let currentPosition = "notFound"
-          // console.log(ticketData._id);
           for (var i = 0; i < currentFlyers.length; i++) {
             if (currentFlyers[i]._id == ticketData._id) {
               currentPosition = i
@@ -223,26 +99,24 @@ export default new Vuex.Store({
           if (currentPosition != "notFound") {
             currentFlyers[currentPosition] = ticketData
           } else {
-            // console.log(currentFlyers);
             currentFlyers.push(ticketData)
           }
           context.commit('UpdatePurchasedTickets', currentFlyers)
     },
-    findPublicEvent(context, eventData){
-      let url = process.env.VUE_APP_API_URL+'/publicEvent/'+eventData.email+'/'+eventData.eventkey
-      return new Promise(
-        (resolve, reject) => {
-          axios.create({
-            withCredentials: true
-          }).get(url).then(response => {
-            console.log(response);
-            resolve(response)
-          }).catch(e => {
-            reject(e)
-          })
-        }
-      )
-    },
+    // findPublicEvent(context, eventData){
+    //   let url = process.env.VUE_APP_API_URL+'/publicEvent/'+eventData.email+'/'+eventData.eventkey
+    //   return new Promise(
+    //     (resolve, reject) => {
+    //       axios.create({
+    //         withCredentials: true
+    //       }).get(url).then(response => {
+    //         resolve(response)
+    //       }).catch(e => {
+    //         reject(e)
+    //       })
+    //     }
+    //   )
+    // },
 
     DeleteEventTicket (context, ticket) {
       let url = process.env.VUE_APP_API_URL+'/events/'+ticket.eventId+'/ticket/'+ticket._id+'/deleteTicket'
@@ -284,7 +158,7 @@ export default new Vuex.Store({
   //getters
   getters: {
     userLoggedIn: state => {
-      if (Object.keys(state.user).length > 0) {
+      if (Object.keys(state.user.user).length > 0) {
         return true;
       } else {
         return false;
@@ -293,26 +167,17 @@ export default new Vuex.Store({
     // eventCounter: state => {
     //   return state.userEvents.length;
     // },
-    userEventByKey: (state, getters) => (key) => {
-      return getters.customerEvents.find(function (eventObj) {
-        /* eslint-disable no-console */
-        if (eventObj._id === key) {
-          // console.log('inside eventobj');
-          return eventObj;
-        }
-        /* eslint-enable no-console */
-      })
-    },
+
     PublicFlyers: state => {
-      return state.events.filter(flyer => flyer.status == 'published');
+      return state.PublicEvents.filter(flyer => flyer.status == 'published');
     },
-    customerEvents: (state, getters) => {
-      if (getters.userLoggedIn) {
-        return state.events.filter(flyer => flyer.publisher == state.user.email)
-      } else {
-        return []
-      }
-    },
+    // customerEvents: (state, getters) => {
+    //   if (getters.userLoggedIn) {
+    //     return state.PublicEvents.filter(flyer => flyer.publisher == state.user.email)
+    //   } else {
+    //     return []
+    //   }
+    // },
     CreatedTicketByEvent: (state, getters) => (eventId) => {
       return state.CreatedTickets.filter(function (ticketObj) {
         if (ticketObj.eventId === eventId) {

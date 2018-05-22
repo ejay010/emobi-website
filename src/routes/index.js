@@ -2,16 +2,18 @@ import CustomerLogin from '../components/CustomerLogin.vue';
 import HomePage from '../components/HomePage.vue';
 import CustomerRegister from '../components/CustomerRegister.vue';
 
-import Customer from '../components/Customer.vue';
+import Customer from '../components/Customer/index.vue';
 import CustomerProfile from '../components/ProfilePage.vue';
-import CustomerEvents from '../components/EventsPage.vue';
-import CustomerTickets from '../components/PurchasedTickets.vue'
-import EditEvent from '../components/EditEvent.vue'
-import CustomerEventList from '../components/Utilities/CustomerEventList.vue'
+import CustomerEvents from '../components/Customer/Events/EventsPage.vue';
+import CustomerTickets from '../components/Customer/Purchases/index.vue'
+import EditEvent from '../components/Customer/Events/EditEvent.vue'
+import CustomerEventList from '../components/Customer/Events/CustomerEventList.vue'
 import Qrcodereader from '../components/QrcodeReader.vue'
 
 import EventView from '../components/EventView.vue'
 import TicketManager from '../components/TicketManager.vue'
+import InvoiceView from '../components/Customer/Purchases/Invoice.vue'
+import PurchasedTickets from '../components/Customer/Purchases/PurchasedTickets.vue'
 
 import TestComponent from '../components/Utilities/GoogleMapComponent.vue'
 
@@ -75,10 +77,24 @@ let routes = [
         ]
       },
       {
-        path: 'tickets',
-        name: 'CustomerTickets',
+        path: 'purchases',
         component: CustomerTickets,
         meta: { requiresAuth: true },
+        children: [
+          {
+            path: 'tickets',
+            name: 'CustomerTickets',
+            component: PurchasedTickets,
+            meta: { requiresAuth: true }
+          },
+          {
+            path: 'invoice/:invoiceId',
+            name: 'FindInvoice',
+            component: InvoiceView,
+            props: true,
+            meta: { requiresAuth: true }
+          }
+        ]
       }
     ]
   },
