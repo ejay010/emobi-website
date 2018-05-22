@@ -17,6 +17,30 @@ export default {
       state.Invoices = invoicePayload
     }
   },
+  getters: {
+    CreatedTickets: (state) => {
+      let customerEvents = state.Events
+      let ticketContainer = []
+      customerEvents.forEach((events) => {
+        if (events.tickets != null) {
+          events.tickets.forEach((ticket) => {
+            ticketContainer.push(ticket)
+          })
+        }
+      })
+
+      return ticketContainer
+    },
+    userEventByKey: (state) => (key) => {
+      return state.Events.find(function (eventObj) {
+        /* eslint-disable no-console */
+        if (eventObj._id === key) {
+          return eventObj;
+        }
+        /* eslint-enable no-console */
+      })
+    },
+  },
   actions: {
     LoginUser (context, userData) {
       // created my first promise
@@ -121,18 +145,6 @@ export default {
       }
 
       context.commit('updateEvents', currentFlyers)
-    },
-  },
-
-  getters: {
-    userEventByKey: (state) => (key) => {
-      return state.Events.find(function (eventObj) {
-        /* eslint-disable no-console */
-        if (eventObj._id === key) {
-          return eventObj;
-        }
-        /* eslint-enable no-console */
-      })
     },
   }
 }

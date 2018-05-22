@@ -12,8 +12,9 @@
           <div class="col-lg-12">
                 '{{tickets.length}}' tickets for {{event.title}}
             <span class="float-right">
+              <router-link :to="{ name: 'EditEvent', params: { email: this.$store.state.user.user.email, eventkey: event._id} }" class="btn btn-default btn-sm">Back to Event</router-link>
               <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createTicketForm">
-                <icon name="plus" style="vertical-align:middle;"></icon>
+                <!-- <icon name="plus" style="vertical-align:middle;"></icon> -->
                 Create a New Ticket
               </button>
             </span>
@@ -107,7 +108,7 @@ export default {
 
   computed: {
     event: function() {
-      return this.$store.getters.customerEvents.find(
+      return this.$store.state.user.Events.find(
         (element) => {
           if (element._id == this.eventId) {
             return true
@@ -116,7 +117,9 @@ export default {
       )
     },
     tickets: function() {
-      return this.$store.getters.CreatedTicketByEvent(this.event._id)
+      if (this.event != null) {
+        return this.event.tickets
+      }
     }
   },
   methods: {
