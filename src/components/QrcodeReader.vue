@@ -64,6 +64,7 @@ export default {
         withCredentials: true
       }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + content + '/redeem').then((response) => {
         console.log('post response');
+        console.log(response.data);
         if (response.data.success) {
           switch (response.data.message) {
             case "Tickets Exhausted":
