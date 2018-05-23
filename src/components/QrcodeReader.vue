@@ -148,6 +148,7 @@ export default {
                 type: 'success'
               })
               this.GuestList = response.data.invoice.contents
+              this.haveGuests = true
               break;
             default:
               console.log(response);
