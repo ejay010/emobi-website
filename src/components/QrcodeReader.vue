@@ -26,6 +26,27 @@
 <router-link :to="{ name: 'CustomerEventList', params: {} }" class="btn btn-primary">Back to Event Menu</router-link>
 </div>
 </div>
+
+<div class="card" v-else>
+  <div class="card-header">
+    Validate and Verify Guest List
+  </div>
+  <div class="card-body">
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-default" v-for="(guest, guest_index) in GuestList" :key="guest_index">
+        <input type="checkbox"  :disabled="guest.outstanding == false"/>
+        <span v-if="guest.guest_spot">
+          Guest Spot
+        </span>
+        <span v-else>
+          {{guest.f_name}} {{guest.l_name}}
+          {{guest.email}}
+          Gender: {{guest.gender}}
+        </span>
+      </label>
+    </div>
+  </div>
+</div>
 </span>
 </template>
 
@@ -50,7 +71,8 @@ export default {
       cameraLoading: true,
       cameraOn: false,
       found: false,
-      haveGuests: false
+      haveGuests: false,
+      GuestList: []
     }
   },
   computed: {
@@ -125,6 +147,7 @@ export default {
                 text: "Ticket Found, Please Verify Guests",
                 type: 'success'
               })
+              this.GuestList = response.data.invoice.contents
               break;
             default:
               console.log(response);
