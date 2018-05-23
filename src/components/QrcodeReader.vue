@@ -32,19 +32,22 @@
     Validate and Verify Guest List
   </div>
   <div class="card-body">
-    <div class="btn-group-toggle" data-toggle="buttons">
-      <label class="btn btn-default" v-for="(guest, guest_index) in GuestList" :key="guest_index">
-        <input type="checkbox"  :disabled="guest.outstanding == false"/>
+    <div class="list-group">
+      <button type="button" class="btn btn-default list-group-item" v-for="(guest, guest_index) in GuestList" :key="guest_index" @click="validateGuest(guest_index)">
         <span v-if="guest.guest_spot">
           Guest Spot
         </span>
         <span v-else>
-          {{guest.f_name}} {{guest.l_name}}
-          {{guest.email}}
+          Name: {{guest.f_name}} {{guest.l_name}} <br />
+          email: {{guest.email}} <br />
           Gender: {{guest.gender}}
         </span>
-      </label>
+        <icon name="checkmark" v-if="guest.outstanding = false"></icon>
+      </button>
     </div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-success">Guest's Confirmed</button>
   </div>
 </div>
 </span>
@@ -91,6 +94,13 @@ export default {
     }
   },
   methods: {
+    validateGuest(guest_index) {
+      if (this.GuestList.length > 0) {
+        let current_guestlist = this.GuestList
+        current_guestlist[guest_index].outstanding = false
+        this.GuestList = current_guestlist
+      }
+    },
     async onInit(promise) {
       // show loading indicator
 
