@@ -1,29 +1,32 @@
 <template>
-<div class="card">
-  <div class="card-header">
-    Please Scan Ticket
-  </div>
-  <div class="card-body">
-    <span v-if="cameraLoading">
-      <spinner></spinner>
-    </span>
-    <div class="p-1">
-      <div class="alert alert-warning" role="alert" v-if="found == false">
-        Waiting for E-code...
-      </div>
-      <div class="alert alert-success" role="alert" v-if="found">
-        Found E-code!
-      </div>
-      <qrcode-reader class="card-img" @init="onInit" @decode="onDecode" @locate="onLocate">
-        On stream
-      </qrcode-reader>
+<span>
+
+    <div class="card" v-if="!haveGuests">
+    <div class="card-header">
+      Please Scan Ticket
     </div>
-    <div class="alert alert-warning" role="alert" v-if="!cameraOn">
-      Please allow e-mobie to access your devices' camera.
-    </div>
-    <router-link :to="{ name: 'CustomerEventList', params: {} }" class="btn btn-primary">Back to Event Menu</router-link>
+    <div class="card-body">
+      <span v-if="cameraLoading">
+        <spinner></spinner>
+      </span>
+<div class="p-1">
+  <div class="alert alert-warning" role="alert" v-if="found == false">
+    Waiting for E-code...
   </div>
+  <div class="alert alert-success" role="alert" v-if="found">
+    Found E-code!
+  </div>
+  <qrcode-reader class="card-img" @init="onInit" @decode="onDecode" @locate="onLocate">
+    On stream
+  </qrcode-reader>
 </div>
+<div class="alert alert-warning" role="alert" v-if="!cameraOn">
+  Please allow e-mobie to access your devices' camera.
+</div>
+<router-link :to="{ name: 'CustomerEventList', params: {} }" class="btn btn-primary">Back to Event Menu</router-link>
+</div>
+</div>
+</span>
 </template>
 
 <style>
@@ -46,7 +49,8 @@ export default {
     return {
       cameraLoading: true,
       cameraOn: false,
-      found: false
+      found: false,
+      haveGuests: false
     }
   },
   computed: {
@@ -103,7 +107,7 @@ export default {
     onDecode: function(content) {
       axios.create({
         withCredentials: true
-      }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + content + '/redeem').then((response) => {
+      }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + content + '/validate').then((response) => {
         console.log('post response');
         console.log(response.data);
         if (response.data.success) {
@@ -115,10 +119,10 @@ export default {
                 type: 'warning'
               })
               break;
-            case "Redemption Successful":
+            case "Ticket Found":
               swal({
                 title: response.data.message,
-                text: response.data.data.qty_available + ' of ' + response.data.data.resolved_qty + ' available.',
+                text: "Ticket Found, Please Verify Guests",
                 type: 'success'
               })
               break;
