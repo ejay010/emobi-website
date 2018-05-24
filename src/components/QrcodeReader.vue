@@ -32,6 +32,9 @@
     <spinner v-if="this.loading"></spinner>
   </div>
   <div class="card-body">
+    <p>
+      Click on RSVP or Guest spot to confirm thier presence.
+    </p>
     <div class="list-group">
       <button type="button" class="btn btn-default list-group-item" v-for="(guest, guest_index) in GuestList" :key="guest_index" @click="validateGuest(guest_index)">
         <span v-if="guest.guest_spot">
@@ -47,7 +50,7 @@
     </div>
   </div>
   <div class="card-footer">
-    <button class="btn btn-success">Guest's Confirmed</button>
+    <button class="btn btn-success" @click="SubmitGuestList">Guest's Confirmed</button>
   </div>
 </div>
 </span>
@@ -76,30 +79,8 @@ export default {
       found: false,
       haveGuests: false,
       loading: false,
-      InvoiceId: "5b04b7bdbe3a760d19cb301b",
-      GuestList: [{
-          "f_name": "Eulond",
-          "l_name": "Kelly III",
-          "email": "ejay010@gmail.com",
-          "gender": "M",
-          "guest_spot": false,
-          "outstanding": true
-        },
-        {
-          "f_name": "Adrianne",
-          "l_name": "Kelly",
-          "gender": "F",
-          "guest_spot": false,
-          "email": "akelly@gmail.com",
-          "outstanding": true
-        }, {
-          "guest_spot": true,
-          "outstanding": true
-        }, {
-          "guest_spot": true,
-          "outstanding": true
-        }
-      ]
+      InvoiceId: "",
+      GuestList: []
     }
   },
   computed: {
