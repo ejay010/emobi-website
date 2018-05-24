@@ -17,7 +17,6 @@
     Found E-code!
   </div>
   <qrcode-reader class="card-img" @init="onInit" @decode="onDecode" @locate="onLocate">
-    On stream
   </qrcode-reader>
 </div>
 <div class="alert alert-warning" role="alert" v-if="!cameraOn">
@@ -30,6 +29,7 @@
 <div class="card" v-else>
   <div class="card-header">
     Validate and Verify Guest List
+    <spinner v-if="this.loading"></spinner>
   </div>
   <div class="card-body">
     <div class="list-group">
@@ -42,7 +42,7 @@
           email: {{guest.email}} <br />
           Gender: {{guest.gender}}
         </span>
-        <icon name="checkmark" v-if="guest.outstanding = false"></icon>
+        <icon name="check" v-if="guest.outstanding != true"></icon>
       </button>
     </div>
   </div>
@@ -75,7 +75,31 @@ export default {
       cameraOn: false,
       found: false,
       haveGuests: false,
-      GuestList: []
+      loading: false,
+      InvoiceId: "5b04b7bdbe3a760d19cb301b",
+      GuestList: [{
+          "f_name": "Eulond",
+          "l_name": "Kelly III",
+          "email": "ejay010@gmail.com",
+          "gender": "M",
+          "guest_spot": false,
+          "outstanding": true
+        },
+        {
+          "f_name": "Adrianne",
+          "l_name": "Kelly",
+          "gender": "F",
+          "guest_spot": false,
+          "email": "akelly@gmail.com",
+          "outstanding": true
+        }, {
+          "guest_spot": true,
+          "outstanding": true
+        }, {
+          "guest_spot": true,
+          "outstanding": true
+        }
+      ]
     }
   },
   computed: {
@@ -95,11 +119,30 @@ export default {
   },
   methods: {
     validateGuest(guest_index) {
-      if (this.GuestList.length > 0) {
-        let current_guestlist = this.GuestList
-        current_guestlist[guest_index].outstanding = false
-        this.GuestList = current_guestlist
-      }
+      this.GuestList[guest_index].outstanding = false
+    },
+    SubmitGuestList() {
+      this.loading = true
+      let url = process.env.VUE_APP_API_URL + '/invoice/' + this.$route.params.eventId + '/' + this.InvoiceId + '/redeem'
+      axios.create({
+        withCredentials: true
+      }).post(url).then((response) => {
+        this.loading = false
+        if (response.data.success) {
+          swal({
+            title: "Guests Confirmed",
+            text: "Ok, they're on the list :)",
+            type: 'success'
+          })
+        }
+      }).catch((e) => {
+        this.loading = false
+        swal({
+          title: "Communication Error",
+          text: e.message,
+          type: 'error'
+        })
+      })
     },
     async onInit(promise) {
       // show loading indicator
@@ -157,6 +200,7 @@ export default {
                 text: "Ticket Found, Please Verify Guests",
                 type: 'success'
               })
+              this.InvoiceId = response.data.invoice._id
               this.GuestList = response.data.invoice.contents
               this.haveGuests = true
               break;
