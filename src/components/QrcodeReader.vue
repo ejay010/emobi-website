@@ -126,7 +126,7 @@ export default {
       let url = process.env.VUE_APP_API_URL + '/invoice/' + this.$route.params.eventId + '/' + this.InvoiceId + '/redeem'
       axios.create({
         withCredentials: true
-      }).post(url).then((response) => {
+      }).post(url, this.GuestList).then((response) => {
         this.loading = false
         if (response.data.success) {
           swal({
