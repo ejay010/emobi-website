@@ -22,6 +22,7 @@
           <button type="button" class="btn btn-danger btn-sm" @click="DeleteEvent">
             Delete
           </button>
+          <router-link :to="{ name: 'CustomerEventList', params: {} }" class="btn btn-default">Back to Event Menu</router-link>
           <hr />
           <form enctype="multipart/form-data" v-on:submit.prevent="submitChanges">
             <div class="form-group">
@@ -217,7 +218,9 @@
               </div>
               <div class="card-body">
                 <div class="form-group">
-                  <googleMap @location_Changed="updateLocationData"></googleMap>
+                  <!-- :showAutoComplete="!has_location" -->
+                  <googleMap @location_Changed="updateLocationData" :MapMarker="currentLocation.geometry">
+                  </googleMap>
                 </div>
               </div>
             </div>
@@ -262,6 +265,7 @@ export default {
       location: {},
       eventObj: {},
       imageFile: {},
+      has_location: false,
       startTime: {
         year: moment().year(),
         month: moment().month(),
@@ -287,6 +291,16 @@ export default {
     /* eslint-enable no-console */
   },
   computed: {
+    currentLocation() {
+      if (this.eventObj != null) {
+        if (this.eventObj.location != null) {
+          let result = JSON.parse(this.eventObj.location)
+          this.has_location = true
+          return result
+        }
+      }
+    },
+
     published() {
       if (this.eventObj != null) {
         if (this.eventObj.status == 'published') {
@@ -502,49 +516,85 @@ export default {
   methods: {
     /* eslint-disable no-console */
     DeleteEvent: function() {
-      this.$store.dispatch('DeleteEvent', this.customerEvent)
+      swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((response) => {
+        if (response.value) {
+          this.$store.dispatch('events/Delete', this.eventObj._id).then((response) => {
+            this.$store.dispatch('user/RemoveEvent', response.data._id).then((response) => {
+              swal({
+                title: 'Deleted!',
+                text: 'Your event has been deleted,',
+                type: 'success'
+              }).then((response) => {
+                if (response.value) {
+                  this.$router.push({
+                    name: 'CustomerEventList'
+                  })
+                }
+              })
+            })
+          })
+        }
+      })
+
     },
     PublishEvent() {
-      this.$store.dispatch('publishEvent', this.eventObj._id).then((response) => {
-        if (!response.data.success) {
+      this.$store.dispatch('user/PublishEvent', this.eventObj._id).then((response) => {
+        console.log(response);
+        if (response.success) {
+          this.$store.dispatch('user/UpdateEvents', response.updatedEvent)
           swal({
-            title: 'Something went wrong!',
-            text: 'Please check your connection or contact System Admin',
-            type: 'error'
+            title: 'Event Updated',
+            text: 'Status Updated',
+            type: 'success'
+          }).then((result) => {
+            if (result.value) {
+              this.eventObj = response.updatedEvent
+            }
           })
-        } else {
-          let currentEvent = response.data.updatedEvent
-          if (currentEvent._id === this.customerEvent._id) {
-            this.customerEvent.status = 'published'
-            swal({
-              title: 'Event Published',
-              text: 'Ok now it\'s share-able',
-              type: 'success',
-            })
-          }
         }
+        // if (!response.data.success) {
+        //   swal({
+        //     title: 'Something went wrong!',
+        //     text: 'Please check your connection or contact System Admin',
+        //     type: 'error'
+        //   })
+        // } else {
+        //   let currentEvent = response.data.updatedEvent
+        //   if (currentEvent._id === this.customerEvent._id) {
+        //     this.customerEvent.status = 'published'
+        //     swal({
+        //       title: 'Event Published',
+        //       text: 'Ok now it\'s share-able',
+        //       type: 'success',
+        //     })
+        //   }
+        // }
 
       })
     },
 
     CancelEvent() {
-      this.$store.dispatch('cancelEvent', this.eventObj._id).then((response) => {
-        if (!response.data.success) {
+      this.$store.dispatch('user/CancelEvent', this.eventObj._id).then((response) => {
+        // console.log(response);
+        if (response.success) {
+          this.$store.dispatch('user/UpdateEvents', response.updatedEvent)
           swal({
-            title: 'Something went wrong!',
-            text: 'Please check your connection or contact System Admin',
-            type: 'error'
+            title: 'Event Updated',
+            text: 'Status Updated',
+            type: 'success'
+          }).then((result) => {
+            if (result.value) {
+              this.eventObj = response.updatedEvent
+            }
           })
-        } else {
-          let currentEvent = response.data.updatedEvent
-          if (currentEvent._id === this.customerEvent._id) {
-            this.customerEvent.status = 'unpublished'
-            swal({
-              title: 'Event Canceled',
-              text: ':( We hope it\'s just postponed',
-              type: 'warning',
-            })
-          }
         }
       })
     },

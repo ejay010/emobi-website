@@ -18,7 +18,7 @@ export default {
     // Customer,
   },
   created: function() {
-    this.$store.dispatch('loadEvents')
+    this.$store.dispatch('init')
   },
   /* eslint-disable no-console */
   sockets: {
@@ -28,17 +28,17 @@ export default {
         case "all":
           switch (data.message) {
             case "Event Published":
-              this.$store.dispatch('UpdateEvents', data.redis.data)
+              // this.$store.dispatch('UpdateEvents', data.redis.data)
               break;
             case "Event Canceled":
-              this.$store.dispatch('UpdateEvents', data.redis.data)
+              // this.$store.dispatch('UpdateEvents', data.redis.data)
               break;
             case "Event Updated":
-              this.$store.dispatch('UpdateEvents', data.redis.data)
+              // this.$store.dispatch('UpdateEvents', data.redis.data)
               break;
-            case "Event Deleted":
-              this.$store.dispatch('RemoveEvent', data.redis.key)
-              break;
+              // case "Event Deleted":
+              //   this.$store.dispatch('RemoveEvent', data.redis.key)
+              //   break;
             default:
               // console.log(data);
           }

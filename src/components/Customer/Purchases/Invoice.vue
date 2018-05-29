@@ -2,9 +2,9 @@
 <div class="container">
   <button type="button" class="btn btn-danger" @click="confirmDelete">Delete</button>
   <button type="button" class="btn btn-success" data-toggle="modal" data-target="#eCode">View E-Code</button>
-  <h5>{{ invoice_data.eventId.title }}</h5>
+  <h5>{{ event_title }}</h5>
   <p>
-    From: {{ start }} <br /> To: {{ finish }} <br /> Ticket: {{ invoice_data.ticketId.title }}
+    From: {{ start }} <br /> To: {{ finish }} <br /> Ticket: {{ event_title }}
   </p>
   <div class="card">
     <div class="card-header">
@@ -91,14 +91,22 @@ export default {
       }
     },
     rsvp() {
-      if (this.invoice_data != null) {
+      if (this.invoice_data.rsvp_list != null) {
         return this.invoice_data.rsvp_list
       }
+      return []
     },
     guests() {
-      if (this.invoice_data != null) {
+      if (this.invoice_data.guest_passes != null) {
         return this.invoice_data.guest_passes
       }
+      return []
+    },
+    event_title() {
+      if (this.invoice_data.eventId != null) {
+        return this.invoice_data.eventId.title
+      }
+      return " "
     }
   },
 

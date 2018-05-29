@@ -37,16 +37,7 @@
 </template>
 
 <script>
-// import EventsPage from './EventsPage.vue'
 export default {
-  // components: {
-  //   EventsPage
-  // },
-  // mounted: function() {
-  //   this.$router.push({
-  //     name: 'CustomerTickets'
-  //   })
-  // },
   sockets: {
     customerNotifications(data) {
       if (data.to === this.$store.state.user.user.email) {

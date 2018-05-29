@@ -73,6 +73,9 @@ export default {
       Purchases: this.$store.state.user.Invoices
     }
   },
+  mounted: function() {
+    this.$store.dispatch('user/initCustomerInvoices')
+  },
   computed: {
     PurchaseCount: function() {
       return this.Purchases.length

@@ -127,6 +127,9 @@ export default {
       errors: []
     };
   },
+  mounted: function() {
+    this.$store.dispatch('user/initCustomerEvents')
+  },
   computed: {
     userEvents() {
       return this.$store.state.user.Events;
@@ -142,16 +145,17 @@ export default {
     seedEvent() {
       this.loading = true
       let data = {
-        user: this.user,
+        // user: this.user,
         eventPurpose: this.eventPurpose,
         eventName: this.eventName,
         eventType: this.eventType
       }
-      this.$store.dispatch('createEvent', data).then(
+      this.$store.dispatch('events/Create', data).then(
         response => {
           this.loading = false
           /* eslint-disable no-console */
           if (response.data.success) {
+            this.$store.dispatch('user/UpdateEvents', response.data.response)
             $('#createEventForm').modal('hide')
             swal({
               title: 'Event Created',

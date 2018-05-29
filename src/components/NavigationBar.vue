@@ -26,7 +26,7 @@
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
     </form>
     <router-link v-if="!LoggedIn" class="btn btn-outline-success" :to="{ name: 'CustomerLogin', params: {} }">Sign In</router-link>
-    <router-link v-if="LoggedIn" class="btn btn-outline-success" :to="{name: 'Customer', params: {email: customer.email} }">
+    <router-link v-if="LoggedIn" class="btn btn-outline-success" :to="{name: 'CustomerTickets', params: {email: customer.email} }">
       <!-- {{customer.username}} -->
       <icon name="home" class="icon-mod"></icon>
     </router-link>

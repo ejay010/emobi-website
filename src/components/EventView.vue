@@ -127,18 +127,18 @@ export default {
     }
   },
   created: function() {
-    this.$store.dispatch('findPublicEvent', this.$route.params)
+    this.$store.dispatch('events/findPublicEvent', this.$route.params)
   },
   computed: {
     flyer() {
-      return this.$store.state.EventView.flyer
+      return this.$store.state.events.flyer
     },
     tickets() {
-      return this.$store.getters.tickets
+      return this.$store.getters['events/tickets']
     },
     flyerImg() {
-      if (this.$store.getters.flyerImg != null) {
-        return this.$store.getters.flyerImg.src
+      if (this.$store.getters['events/flyerImg'] != null) {
+        return this.$store.getters['events/flyerImg'].src
       }
       return "#"
     },
@@ -207,6 +207,7 @@ export default {
       }).post(process.env.VUE_APP_API_URL + '/tickets/' + this.flyer._id + '/purchase', data).then((response) => {
         this.loading = false
         if (response.data.success) {
+          this.store.dispatch('user/AddInvoice', response.data.data)
           $('#purchaseTicketDiag').modal('hide')
           swal({
             title: 'Purchase Succesful',
@@ -248,7 +249,7 @@ export default {
         case "all":
           switch (data.message) {
             case "Ticket Sale":
-              this.$store.dispatch('SaleNotice', data.sale)
+              this.$store.dispatch('events/SaleNotice', data.sale)
               break;
             default:
 

@@ -115,8 +115,7 @@ export default {
         // console.log(response.data);
         $('#purchaseTicketDiag').modal('hide')
         if (response.data.success) {
-          console.log(response.data);
-          // this.$store.dispatch('SaveInvoice', response.data.)
+          this.$store.dispatch('user/AddInvoice', response.data.data)
           swal({
             title: 'Purchase Complete',
             text: 'Your tickets are in your hub',

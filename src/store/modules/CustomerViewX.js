@@ -7,6 +7,12 @@ export default {
     Invoices: [], // customer purchases
   },
   mutations: {
+    login (state, userData) {
+      state.user = userData
+    },
+    logOut (state, userData) {
+      state.user = null
+    },
     updateUser (state, user) {
       state.user = user
     },
@@ -40,6 +46,10 @@ export default {
         /* eslint-enable no-console */
       })
     },
+
+    Invoices: (state) => {
+      return state.Invoices
+    }
   },
   actions: {
     LoginUser (context, userData) {
@@ -50,7 +60,9 @@ export default {
         }).post(process.env.VUE_APP_API_URL+'/Customer/login', userData)
         .then(response => {
           if (response.data.success) {
-            context.commit('updateUser', response.data.user);
+            context.commit('login', response.data.user);
+            context.dispatch('initCustomerEvents')
+            context.dispatch('initCustomerInvoices')
             resolve({
               success: true,
               status: 200,
@@ -145,6 +157,53 @@ export default {
       }
 
       context.commit('updateEvents', currentFlyers)
+    },
+    RemoveEvent (context, eventkey){
+      let currentEvents = context.state.Events
+      let current_position = currentEvents.find(function(array_element) {
+        if (array_element._id == eventkey) {
+          return true
+        }
+      })
+      let deleted_elements = currentEvents.splice(current_position, 1)
+      if (deleted_elements.length > 0) {
+        context.commit('updateEvents', currentEvents)
+        return true
+      } else {
+        return false
+      }
+    },
+
+    AddInvoice (context, invoiceData){
+      let currentInvoices = context.state.Invoices
+      currentInvoices.push(invoiceData)
+      context.commit('updateInvoices', currentInvoices)
+    },
+
+    PublishEvent (context, eventId) {
+      return new Promise(function(resolve, reject) {
+        axios.create({
+          withCredentials: true
+        }).get(process.env.VUE_APP_API_URL + '/events/'+eventId+'/publish').then((response) => {
+          context.dispatch('UpdateEvents', response.data.updatedEvent)
+          resolve(response.data)
+        }).catch((e) => {
+          reject(e)
+        })
+      });
+    },
+
+    CancelEvent (context, eventId) {
+      return new Promise(function(resolve, reject) {
+        axios.create({
+          withCredentials: true
+        }).get(process.env.VUE_APP_API_URL + '/events/'+eventId+'/cancel').then((response) => {
+          context.dispatch('UpdateEvents', response.data.updatedEvent)
+          resolve(response.data)
+        }).catch((e) => {
+          reject(e)
+        })
+      });
     },
   }
 }

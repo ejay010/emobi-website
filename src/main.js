@@ -2,11 +2,13 @@ import './logger-init.js'
 import Vue from 'vue'
 import axios from 'axios'
 
+
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 import routes from './routes'
 
 import Vuex from 'vuex'
+
 Vue.use(Vuex)
 import store from './store'
 

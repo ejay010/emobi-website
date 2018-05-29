@@ -78,8 +78,6 @@ export default {
       this.$store.dispatch('user/LoginUser', this.$data).then(response => {
         this.loading = false
         if (response.success) {
-          this.$store.dispatch('user/initCustomerEvents')
-          this.$store.dispatch('user/initCustomerInvoices')
           swal({
             title: "Welcome!",
             text: this.$store.state.user.username,

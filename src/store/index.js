@@ -2,30 +2,41 @@ import axios from 'axios'
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
+import VuexPersist from 'vuex-persist'
+
 import EventViewX from './modules/EventViewX.js'
 import CustomerViewX from '../store/modules/CustomerViewX.js'
 
+let whitelistMutations = [
+  'user/login',
+  'user/logOut',
+  'user/updateEvents',
+  'user/updateInvoices'
+]
+const vuexLocalStorage = new VuexPersist({
+  key: 'emobie',
+  storage: window.sessionStorage,
+  modules: ['user'],
+  filter: (mutation) => {
+    console.log(mutation.type);
+    return (whitelistMutations.indexOf(mutation.type) != -1)}
+})
+
 export default new Vuex.Store({
+  plugins: [vuexLocalStorage.plugin],
   modules: {
-    EventView: EventViewX,
+    events: EventViewX,
     user: CustomerViewX
   },
   //main-state
   state: {
-    loggedIn: "false",
-    PublicEvents: [],
+    // PublicEvents: [],
     category: "entertainment",
   },
   //mutations alter state
   mutations: {
     updateLoggedIn (state, updatedStatus) {
       state.loggedIn = updatedStatus
-    },
-    updateUser (state, updatedUser) {
-      state.user = updatedUser
-    },
-    updatePublicEvents (state, updatedFlyers) {
-      state.PublicEvents = updatedFlyers
     },
     UpdateCreatedTickets (state, updatedTickets) {
       state.CreatedTickets = updatedTickets
@@ -39,36 +50,15 @@ export default new Vuex.Store({
   },
   // actions
   actions: {
-    RemoveEvent (context, eventkey){
-      let currentEvents = context.state.events
-      let current_position = currentEvents.find(function(array_element) {
-        if (array_element._id == eventkey) {
-          return true
-        }
-      })
-      let deleted_elements = currentEvents.splice(current_position, 1)
-      if (deleted_elements.length > 0) {
-        context.commit('updateEvents', currentEvents)
-      }
-    },
-    LogoutUser (context) {
-      context.commit('updateUser', {})
-    },
-    /* eslint-disable no-console */
-    loadEvents (context){
-      axios.get(process.env.VUE_APP_API_URL+'/events').then(response => {
-        context.commit('updatePublicEvents', response.data)
-      }).catch(e => {
-        console.log(e);
-      })
+    init (context) {
+      context.dispatch('events/loadPublished')
     },
 
     /* eslint-enable no-console */
     setCategory (context, category) {
       context.commit('updateCategory', category)
     },
-
-/* eslint-disable no-console */
+    /* eslint-disable no-console */
 
     UpdateCreatedTickets(context, ticketData){
         let currentFlyers = context.state.CreatedTickets
@@ -103,20 +93,6 @@ export default new Vuex.Store({
           }
           context.commit('UpdatePurchasedTickets', currentFlyers)
     },
-    // findPublicEvent(context, eventData){
-    //   let url = process.env.VUE_APP_API_URL+'/publicEvent/'+eventData.email+'/'+eventData.eventkey
-    //   return new Promise(
-    //     (resolve, reject) => {
-    //       axios.create({
-    //         withCredentials: true
-    //       }).get(url).then(response => {
-    //         resolve(response)
-    //       }).catch(e => {
-    //         reject(e)
-    //       })
-    //     }
-    //   )
-    // },
 
     DeleteEventTicket (context, ticket) {
       let url = process.env.VUE_APP_API_URL+'/events/'+ticket.eventId+'/ticket/'+ticket._id+'/deleteTicket'
@@ -164,20 +140,6 @@ export default new Vuex.Store({
         return false;
       }
     },
-    // eventCounter: state => {
-    //   return state.userEvents.length;
-    // },
-
-    PublicFlyers: state => {
-      return state.PublicEvents.filter(flyer => flyer.status == 'published');
-    },
-    // customerEvents: (state, getters) => {
-    //   if (getters.userLoggedIn) {
-    //     return state.PublicEvents.filter(flyer => flyer.publisher == state.user.email)
-    //   } else {
-    //     return []
-    //   }
-    // },
     CreatedTicketByEvent: (state, getters) => (eventId) => {
       return state.CreatedTickets.filter(function (ticketObj) {
         if (ticketObj.eventId === eventId) {

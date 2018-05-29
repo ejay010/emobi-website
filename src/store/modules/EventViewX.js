@@ -1,12 +1,17 @@
 import axios from 'axios'
 export default {
+  namespaced: true,
   state: {
-    flyer: {}
+    flyer: {},
+    publishedEvents: []
   },
   mutations: {
     setFlyer (state, newflyer) {
       state.flyer = newflyer
     },
+    setPublishedEvents (state, eventsArray) {
+      state.publishedEvents = eventsArray
+    }
   },
   actions: {
     findPublicEvent (context, eventData) {
@@ -31,6 +36,39 @@ export default {
       ticketObj.qty_sold = ticketObj.qty_sold + saleData.qty
       ticketObj.quantity_available = ticketObj.quantity_available - saleData.qty
 
+    },
+    Create (context, seedData) {
+      return new Promise((resolve, reject) => {
+        let userData = context.rootState.user.user
+        axios.create({
+          withCredentials: true
+        }).post(process.env.VUE_APP_API_URL + '/createEvent', {
+          eventSeeds: seedData,
+          user: userData
+        }).then((response) => {
+          resolve(response)
+        }).catch((e) => {
+          reject(e)
+        })
+      }) ;
+    },
+
+    Delete (context, eventId) {
+      return new Promise ((resolve, reject) => {
+        axios.create({
+          withCredentials: true
+        }).get(process.env.VUE_APP_API_URL + '/events/'+ eventId +'/delete').then((response) => {
+          resolve(response.data)
+        }).catch((e) => {
+          reject(e)
+        })
+      })
+    },
+
+    loadPublished (context) {
+      axios.get(process.env.VUE_APP_API_URL + '/events/published').then((response) => {
+        context.commit('setPublishedEvents', response.data)
+      })
     }
   },
 

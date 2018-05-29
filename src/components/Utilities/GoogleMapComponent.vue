@@ -1,6 +1,6 @@
 <template>
-  <span>
-    <gmap-autocomplete class="form-control" @place_changed="updateLocation" required="true" v-if="showAutoComplete"></gmap-autocomplete>
+<span>
+    <gmap-autocomplete class="form-control" @place_changed="updateLocation" :required="!hasMarker" v-if="showAutoComplete"></gmap-autocomplete>
     <gmap-map
       :center="center"
       :zoom="zoom"
@@ -20,22 +20,26 @@
 
 <script>
 export default {
-  mounted: function () {
+  mounted: function() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-       this.currentLocation = {lat:position.coords.latitude, lng:position.coords.longitude}
-    })
-  } else {
-    this.errors.push({
-      node: 'Location',
-      message: "Location data not available"
-    })
-  }
+        this.currentLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        }
+      })
+    } else {
+      this.errors.push({
+        node: 'Location',
+        message: "Location data not available"
+      })
+    }
   },
-  data: function () {
+  data: function() {
     return {
       currentLocation: {},
-      userlocation: {}
+      userlocation: {},
+      raw_location_data: {}
     }
   },
   props: {
@@ -43,15 +47,15 @@ export default {
       type: Object,
     },
     mapStyle: {
-      default: function () {
-      return {
-        width: '500px',
-        height: '300px'
-      }
+      default: function() {
+        return {
+          width: '500px',
+          height: '300px'
+        }
       }
     },
     mapClass: {
-      default: function () {
+      default: function() {
         return {
           'img-responsive': true
         }
@@ -66,19 +70,22 @@ export default {
     }
   },
   computed: {
-    hasMarker: function () {
+    hasMarker: function() {
       if (this.MapMarker != null) {
         return true
       } else {
         return false
       }
     },
-    center: function () {
+    center: function() {
       if (!this.hasMarker) {
         if (this.currentLocation.lat != null) {
           return this.currentLocation
         } else {
-          return {lat: 25.06, lng: -77.345}
+          return {
+            lat: 25.06,
+            lng: -77.345
+          }
         }
       } else {
         return this.MapMarker.location
@@ -86,7 +93,7 @@ export default {
     },
   },
   methods: {
-    updateLocation: function (data) {
+    updateLocation: function(data) {
       this.$emit('location_Changed', data)
       this.userlocation = data
     }
