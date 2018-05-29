@@ -8,7 +8,7 @@
       :style="mapStyle"
       :class="mapClass"
     >
-    <gmap-marker :position="MapMarker.location" v-if="hasMarker">
+    <gmap-marker :position="MapGeoMarker.location" v-if="hasMarker">
     </gmap-marker>
     </gmap-map>
   </span>
@@ -75,6 +75,13 @@ export default {
         return true
       } else {
         return false
+      }
+    },
+    MapGeoMarker: function() {
+      if (this.hasMarker) {
+        return this.MapMarker.geometry
+      } else {
+        return null
       }
     },
     center: function() {
