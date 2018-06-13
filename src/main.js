@@ -36,6 +36,7 @@ Vue.component('icon', Icon)
 Vue.config.productionTip = false
 
 const router = new VueRouter({
+  mode: 'history',
   routes: routes,
   linkActiveClass: 'active'
 })

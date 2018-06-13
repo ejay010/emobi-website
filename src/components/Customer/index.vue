@@ -5,10 +5,19 @@
       <div class="card">
         <div class="card-header">
           <div class="media">
-            <img class="mr-3 rounded-circle" src="http://via.placeholder.com/100x100" alt="Generic placeholder image">
+            <img class="mr-3 rounded-circle" :src="profile_picture" style="max-width:95px;" alt="Generic placeholder image">
             <div class="media-body">
               <h5 class="mt-0">{{ this.$store.state.user.user.username }}</h5>
+              <p v-if="this.$store.state.user.user.status == null">
+                *** No Status ***
+              </p>
+              <p v-else>
+                {{ this.$store.state.user.user.status}}
+              </p>
               <p>
+                <router-link :to="{ name: 'CustomerPreferences', params: {} }" class="btn btn-default">
+                  Settings
+                </router-link>
               </p>
             </div>
           </div>
@@ -44,7 +53,7 @@ export default {
         /* eslint-disable no-console */
         switch (data.message) {
           case 'Ticket Created':
-            this.$store.dispatch('UpdateCreatedTickets', data.redis.data)
+            this.$store.dispatch('UpdateCreatedTickets', data.data)
             break;
 
           case 'Event Created':
@@ -56,6 +65,19 @@ export default {
       }
     }
   },
+
+  computed: {
+    profile_picture() {
+      let pic_string = this.$store.state.user.user.ProfilePic
+      if (pic_string != null) {
+        let picObj = JSON.parse(pic_string)
+        let picURL = process.env.VUE_APP_API_URL + '/' + picObj.filename + '-' + picObj.originalname
+        return picURL
+      } else {
+        return "http://via.placeholder.com/100x100"
+      }
+    }
+  }
 }
 </script>
 

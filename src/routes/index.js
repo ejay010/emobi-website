@@ -14,6 +14,7 @@ import EventView from '../components/EventView.vue'
 import TicketManager from '../components/TicketManager.vue'
 import InvoiceView from '../components/Customer/Purchases/Invoice.vue'
 import PurchasedTickets from '../components/Customer/Purchases/PurchasedTickets.vue'
+import CustomerPreferences from '../components/Customer/Preferences/preferences.vue'
 
 import TestComponent from '../components/Utilities/GoogleMapComponent.vue'
 
@@ -48,6 +49,13 @@ let routes = [
         name: 'CustomerProfile',
         component: CustomerProfile,
         meta: { requiresAuth: true },
+      },
+      {
+        path: 'preferences',
+        name: 'CustomerPreferences',
+        props: true,
+        component: CustomerPreferences,
+        meta: { requiresAuth: true }
       },
       {
         path:'events',

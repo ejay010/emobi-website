@@ -147,20 +147,21 @@ export default {
           'Content-Type': 'mutlipart/form-data'
         }
       }).then((response) => {
-        if (response.data.success) {
-          $('#createTicketForm').modal('hide')
-          swal({
-            title: 'Ticket Created',
-            type: 'success',
-          })
-        } else {
-          $('#createTicketForm').modal('hide')
-          swal({
-            title: 'Something Went Wrong',
-            type: 'error',
-            text: response.data.message
-          })
-        }
+        console.log(response);
+        // if (response.data.success) {
+        //   $('#createTicketForm').modal('hide')
+        //   swal({
+        //     title: 'Ticket Created',
+        //     type: 'success',
+        //   })
+        // } else {
+        //   $('#createTicketForm').modal('hide')
+        //   swal({
+        //     title: 'Something Went Wrong',
+        //     type: 'error',
+        //     text: response.data.message
+        //   })
+        // }
       })
     }
   }

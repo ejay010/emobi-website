@@ -18,7 +18,6 @@ const vuexLocalStorage = new VuexPersist({
   storage: window.sessionStorage,
   modules: ['user'],
   filter: (mutation) => {
-    console.log(mutation.type);
     return (whitelistMutations.indexOf(mutation.type) != -1)}
 })
 

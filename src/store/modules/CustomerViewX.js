@@ -52,6 +52,12 @@ export default {
     }
   },
   actions: {
+    // create a ticket for sale and the return to the list
+    CreatedTicket (context, ticketData) {
+      return new Promise(function(resolve, reject) {
+
+      });
+    },
     LoginUser (context, userData) {
       // created my first promise
       return new Promise((resolve, reject) => {
@@ -60,6 +66,7 @@ export default {
         }).post(process.env.VUE_APP_API_URL+'/Customer/login', userData)
         .then(response => {
           if (response.data.success) {
+            console.log(response.data.user);
             context.commit('login', response.data.user);
             context.dispatch('initCustomerEvents')
             context.dispatch('initCustomerInvoices')
@@ -205,5 +212,22 @@ export default {
         })
       });
     },
+
+    Update (context, updateInfo) {
+      return new Promise(function(resolve, reject) {
+        let UpdateUrl = process.env.VUE_APP_API_URL + '/Customer/updateInfo'
+
+        axios.create({
+          withCredentials: true
+        }).post(UpdateUrl, updateInfo).then((response) => {
+          if (response.data.success) {
+            context.commit('updateUser', response.data.user)
+            resolve(response.data)
+          }
+        }).catch((e) => {
+          reject(e)
+        })
+      });
+    }
   }
 }

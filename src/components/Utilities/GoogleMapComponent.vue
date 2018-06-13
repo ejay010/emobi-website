@@ -95,7 +95,7 @@ export default {
           }
         }
       } else {
-        return this.MapMarker.location
+        return this.MapGeoMarker.location
       }
     },
   },
