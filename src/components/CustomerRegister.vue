@@ -54,11 +54,11 @@ export default {
   components: {
     Loader
   },
-  data: function () {
+  data: function() {
     return {
       loading: false,
-        loaderColor: '#fff',
-        loaderSize: '6px',
+      loaderColor: '#fff',
+      loaderSize: '6px',
       email: "",
       password: "",
       password_confirm: "",
@@ -69,10 +69,10 @@ export default {
     };
   },
   methods: {
-      submitRegistration(){
-        /* eslint-disable no-console */
-        this.loading = true
-        axios.post(process.env.VUE_APP_API_URL+'/Customer/Register', this.$data)
+    submitRegistration() {
+      /* eslint-disable no-console */
+      this.loading = true
+      axios.post(process.env.VUE_APP_API_URL + '/Customer/Register', this.$data)
         .then(response => {
           this.loading = false
           if (!response.data.error) {
@@ -83,11 +83,13 @@ export default {
                 type: 'success'
               }).then((result) => {
                 if (result.value) {
-                  this.$store.dispatch('LoginUser', this.$data).then(response => {
+                  this.$store.dispatch('user/LoginUser', this.$data).then(response => {
                     if (response.success) {
                       this.$store.dispatch('loadTickets')
                       this.$store.dispatch('loadPurchasedTickets')
-                      this.$router.push({name: 'HomePage'})
+                      this.$router.push({
+                        name: 'HomePage'
+                      })
                     }
                   })
                 }
@@ -103,9 +105,10 @@ export default {
         })
         .catch((e) => {
           this.loading = false
-          console.log(e)})
-        /* eslint-enable no-console */
-      }
+          console.log(e)
+        })
+      /* eslint-enable no-console */
+    }
   }
 }
 </script>
