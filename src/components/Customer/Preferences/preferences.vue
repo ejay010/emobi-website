@@ -52,8 +52,8 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="ResetPictureForm">Close</button>
-  <button type="button" class="btn btn-primary" v-on:click="UploadNewPicture">Save Picture</button>
+  <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="ResetPictureForm" :disabled="loading">Close</button>
+  <button type="button" class="btn btn-primary" v-on:click="UploadNewPicture" :disabled="loading">Save Picture</button>
 </div>
 </div>
 </div>
@@ -66,6 +66,7 @@
 </style>
 
 <script>
+import $ from 'jquery'
 import axios from 'axios'
 import swal from 'sweetalert2'
 export default {
@@ -104,21 +105,23 @@ export default {
         const formData = new FormData()
         formData.append('new_picture', this.user.profile_picture, this.new_profile_picture[0].name)
 
-        let url = process.env.VUE_APP_API_URL + '/Customer/new_profile_picture'
-        axios({
-          url: url,
-          withCredentials: true,
-          data: formData,
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data'
+        this.$store.dispatch('user/ChangePic', formData).then((response) => {
+          if (response.success) {
+            $('#profile_picture_portal').modal('hide')
+            swal({
+              title: "Picture Uploaded",
+              text: "Your new picture was saved",
+              type: "success"
+            })
           }
-        }).then((response) => {
-          console.log(response.data);
         }).catch((e) => {
-          console.error(e);
+          swal({
+            title: "Error",
+            text: e.message,
+            type: 'error'
+          })
         })
+
         this.loading = false
       }
     },

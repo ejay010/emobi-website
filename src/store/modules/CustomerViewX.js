@@ -66,7 +66,6 @@ export default {
         }).post(process.env.VUE_APP_API_URL+'/Customer/login', userData)
         .then(response => {
           if (response.data.success) {
-            console.log(response.data.user);
             context.commit('login', response.data.user);
             context.dispatch('initCustomerEvents')
             context.dispatch('initCustomerInvoices')
@@ -225,6 +224,29 @@ export default {
             resolve(response.data)
           }
         }).catch((e) => {
+          reject(e)
+        })
+      });
+    },
+
+    ChangePic (context, uploadInfo) {
+      return new Promise(function(resolve, reject) {
+        let url = process.env.VUE_APP_API_URL + '/Customer/new_profile_picture'
+        axios({
+          url: url,
+          withCredentials: true,
+          data: uploadInfo,
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then((response) => {
+          // console.log(response.data);
+          context.commit('updateUser', response.data.user)
+          resolve(response.data)
+        }).catch((e) => {
+          // console.error(e);
           reject(e)
         })
       });
