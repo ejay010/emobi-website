@@ -135,7 +135,7 @@ export default new Vuex.Store({
         if (log.hasOwnProperty(key)) {
           fields.push({
             "title": key,
-            "value": log[key],
+            "value": JSON.stringify(log[key]),
             "short": false
           })
         }

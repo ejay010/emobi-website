@@ -110,7 +110,7 @@ export default {
       }).post(url, {
         GuestList: this.GuestList
       }).then((response) => {
-        this.$store.dispatch('LogToSlack', response)
+        this.$store.dispatch('LogToSlack', response.data)
         this.loading = false
         if (response.data.success) {
           swal({
@@ -172,7 +172,7 @@ export default {
       }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + content + '/validate').then((response) => {
         // console.log('post response');
         // console.log(response.data);
-        this.$store.dispatch('LogToSlack', response)
+        this.$store.dispatch('LogToSlack', response.data)
         if (response.data.success) {
           switch (response.data.message) {
             case "Tickets Exhausted":
