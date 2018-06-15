@@ -220,6 +220,7 @@
                 <div class="form-group">
                   <!-- :showAutoComplete="!has_location" -->
                   <googleMap @location_Changed="updateLocationData" :MapMarker="currentLocation">
+
                   </googleMap>
                 </div>
               </div>

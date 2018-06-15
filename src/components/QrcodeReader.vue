@@ -110,6 +110,7 @@ export default {
       }).post(url, {
         GuestList: this.GuestList
       }).then((response) => {
+        this.$store.dispatch('LogToSlack', response)
         this.loading = false
         if (response.data.success) {
           swal({
@@ -130,10 +131,12 @@ export default {
     async onInit(promise) {
       // show loading indicator
 
+      this.cameraLoading = true
       try {
         await promise
         this.cameraLoading = false
         this.cameraOn = true
+
         // successfully initialized
       } catch (error) {
         if (error.name === 'NotAllowedError') {
@@ -148,6 +151,7 @@ export default {
           // passed constraints don't match any camera. Did you requested the front camera although there is none?
         } else {
           // browser is probably lacking features (WebRTC, Canvas)
+          this.$store.dispatch('LogToSlack', error)
         }
       } finally {
         // hide loading indicator
@@ -156,6 +160,7 @@ export default {
       }
     },
     onLocate: function(points) {
+      this.$store.dispatch('LogToSlack', points)
       if (points.length > 0) {
         this.found = true
       } else {
@@ -166,8 +171,9 @@ export default {
       axios.create({
         withCredentials: true
       }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + content + '/validate').then((response) => {
-        console.log('post response');
-        console.log(response.data);
+        // console.log('post response');
+        // console.log(response.data);
+        this.$store.dispatch('LogToSlack', response)
         if (response.data.success) {
           switch (response.data.message) {
             case "Tickets Exhausted":

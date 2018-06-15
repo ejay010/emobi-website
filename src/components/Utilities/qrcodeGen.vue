@@ -1,5 +1,5 @@
 <template>
-<img v-bind:src="qrcodeImg" class="img-fluid"></img>
+<img v-bind:src="qrcodeImg" class="mx-auto d-block"></img>
 </template>
 
 <style>
@@ -31,7 +31,6 @@ export default {
       awesomeqr().create({
         text: this.code,
         size: this.size,
-        margin: 20,
         logoImage: logo,
         callback: (data) => {
           this.qrcodeImg = data

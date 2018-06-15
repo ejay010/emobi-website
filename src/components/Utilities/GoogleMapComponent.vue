@@ -8,7 +8,7 @@
       :style="mapStyle"
       :class="mapClass"
     >
-    <gmap-marker :position="MapGeoMarker.location" v-if="hasMarker">
+    <gmap-marker :position="MapGeoMarker.geometry.location" v-if="hasMarker">
     </gmap-marker>
     </gmap-map>
   </span>
@@ -79,24 +79,39 @@ export default {
     },
     MapGeoMarker: function() {
       if (this.hasMarker) {
-        return this.MapMarker.geometry
+        return this.MapMarker
       } else {
-        return null
+        return {
+          geometry: {
+            location: {
+              lat: 25.06,
+              lng: -77.345
+            }
+          }
+        }
       }
     },
     center: function() {
-      if (!this.hasMarker) {
-        if (this.currentLocation.lat != null) {
-          return this.currentLocation
-        } else {
-          return {
-            lat: 25.06,
-            lng: -77.345
-          }
-        }
-      } else {
-        return this.MapGeoMarker.location
-      }
+      return this.MapGeoMarker.geometry.location
+      // if (!this.hasMarker) {
+      //   if (this.currentLocation.lat != null) {
+      //     return this.currentLocation
+      //   } else {
+      //     return {
+      //       lat: 25.06,
+      //       lng: -77.345
+      //     }
+      //   }
+      // } else {
+      //   if (this.MapGeoMarker != null) {
+      //     return this.MapGeoMarker.geometry.location
+      //   } else {
+      //     return {
+      //       lat: 25.06,
+      //       lng: -77.345
+      //     }
+      //   }
+      // }
     },
   },
   methods: {

@@ -20,18 +20,37 @@
                     </button>
               </div>
               <span v-if="!slot.guest_spot">
-                    <label :for="slot_key + '_fname'">First Name</label>
-                    <input type="text" class="form-control" :name="slot_key + '_fname'" :id="slot_key + '_fname'" v-model="slot.f_name" required/>
-                    <label :for="slot_key + '_lname'">Last Name</label>
-                    <input type="text" class="form-control" :name="slot_key + '_lname'" :id="slot_key + '_lname'" v-model="slot.l_name" required/>
-                    <label :for="slot_key + '_email'">Email</label>
-                    <input class="form-control" type="email" :name="slot_key + '_email'" :id="slot_key + '_email'" v-model="slot.email" required/>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" :id="slot_key + '_gender-M'" :name="slot_key + '_gender'" value="M" v-model="slot.gender">
-                      <label class="form-check-label" :for="slot_key + '_gender-M'">Male</label>
-                      <input class="form-check-input" type="radio" :id="slot_key + '_gender-F'" :name="slot_key + '_gender'" value="F" v-model="slot.gender">
-                      <label class="form-check-label" :for="slot_key + '_gender-F'">Female</label>
-                    </div>
+                <div class="form-group">
+                  <label :for="slot_key + '_fname'">First Name</label>
+                  <input type="text" class="form-control" :name="slot_key + '_fname'" :id="slot_key + '_fname'" v-model="slot.f_name" required/>
+                </div>
+                <div class="form-group">
+                  <label :for="slot_key + '_lname'">Last Name</label>
+                  <input type="text" class="form-control" :name="slot_key + '_lname'" :id="slot_key + '_lname'" v-model="slot.l_name" required/>
+
+                </div>
+                <div class="form-group">
+                  <label :for="slot_key + '_email'">Email</label>
+                  <input class="form-control" type="email" :name="slot_key + '_email'" :id="slot_key + '_email'" v-model="slot.email" required/>
+
+                </div>
+                <div class="form-group">
+                  <label :for="slot_key + '_dob'">Birthday</label>
+                  <input type="date" class="form-control" :name="slot_key + '_dob'" :id="slot_key + '_dob'" v-model="slot.dob" required/>
+
+                </div>
+                <div class="form-group">
+                  <legend class="col-form-label col-sm-2 pt-0">Gender</legend>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" :id="slot_key + '_gender-M'" :name="slot_key + '_gender'" value="M" v-model="slot.gender">
+                    <label class="form-check-label" :for="slot_key + '_gender-M'">Male</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" :id="slot_key + '_gender-F'" :name="slot_key + '_gender'" value="F" v-model="slot.gender">
+                    <label class="form-check-label" :for="slot_key + '_gender-F'">Female</label>
+                  </div>
+                </div>
+
                   </span>
               <span v-else>
                     <p>Guest Spot</p>
@@ -53,6 +72,7 @@
 </template>
 
 <script>
+import 'date-input-polyfill'
 import Loader from 'vue-spinner/src/ClipLoader.vue'
 import $ from 'jquery'
 import axios from 'axios'
@@ -85,6 +105,7 @@ export default {
         f_name: "",
         l_name: "",
         gender: "F",
+        dob: "",
         guest_spot: false
       })
       let height = $('#ticketList').height();

@@ -39,7 +39,7 @@
                   <h5>Location</h5>
               </div>
               <div class="card-body">
-                  <googleMap :showAutoComplete="false" :mapStyle="mapStyle" :MapMarker="locationData.geometry" :zoom="10"></googleMap>
+                  <googleMap :showAutoComplete="false" :mapStyle="mapStyle" :MapMarker="locationData" :zoom="10"></googleMap>
               </div>
           </div>
 
@@ -152,7 +152,12 @@ export default {
       if (this.flyer.location != null) {
         return JSON.parse(this.flyer.location)
       } else {
-        return {}
+        return {
+          geometry: {
+            lat: 25.06,
+            lng: -77.345
+          }
+        }
       }
     },
   },
