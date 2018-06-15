@@ -143,7 +143,9 @@ export default new Vuex.Store({
       let message = {
         text: "Error message",
         attachments: [
-          "fields": fields
+          {
+            "fields": fields
+          }
         ]
       }
       let WebHookUrl = 'https://hooks.slack.com/services/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'
