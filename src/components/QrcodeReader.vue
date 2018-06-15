@@ -110,7 +110,7 @@ export default {
       }).post(url, {
         GuestList: this.GuestList
       }).then((response) => {
-        this.$store.dispatch('LogToSlack', response.data)
+        this.$store.dispatch('LogToSlack', 'From SubmitGuestList()', response.data)
         this.loading = false
         if (response.data.success) {
           swal({
@@ -141,17 +141,22 @@ export default {
       } catch (error) {
         if (error.name === 'NotAllowedError') {
           // user denied camera access permisson
+          this.$store.dispatch('LogToSlack', 'NotAllowedError', error)
         } else if (error.name === 'NotFoundError') {
           // no suitable camera device installed
+          this.$store.dispatch('LogToSlack', 'NotFoundError', error)
         } else if (error.name === 'NotSupportedError') {
           // page is not served over HTTPS (or localhost)
+          this.$store.dispatch('LogToSlack', 'NotSupportedError', error)
         } else if (error.name === 'NotReadableError') {
           // maybe camera is already in use
+          this.$store.dispatch('LogToSlack', 'NotReadableError', error)
         } else if (error.name === 'OverconstrainedError') {
+          this.$store.dispatch('LogToSlack', 'OverconstrainedError', error)
           // passed constraints don't match any camera. Did you requested the front camera although there is none?
         } else {
           // browser is probably lacking features (WebRTC, Canvas)
-          this.$store.dispatch('LogToSlack', error)
+          this.$store.dispatch('LogToSlack', 'From onInit() catchAll', error)
         }
       } finally {
         // hide loading indicator

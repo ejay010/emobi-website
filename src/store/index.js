@@ -129,7 +129,7 @@ export default new Vuex.Store({
       }
     },
 
-    LogToSlack (context, log) {
+    LogToSlack (context, headline, log) {
       let fields = []
       for (var key in log) {
         if (log.hasOwnProperty(key)) {
@@ -141,7 +141,7 @@ export default new Vuex.Store({
         }
       }
       let message = {
-        text: "Error message",
+        text: headline,
         attachments: [
           {
             "fields": fields
