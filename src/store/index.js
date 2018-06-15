@@ -129,9 +129,25 @@ export default new Vuex.Store({
       }
     },
 
-    LogToSlack (context, logString) {
+    LogToSlack (context, log) {
+      let fields = []
+      for (var key in log) {
+        if (log.hasOwnProperty(key)) {
+          fields.push({
+            "title": key,
+            "value": log.key,
+            "short": false
+          })
+        }
+      }
+      let message = {
+        text: "Error message",
+        attachments: [
+          "fields": fields
+        ]
+      }
       let WebHookUrl = 'https://hooks.slack.com/services/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'
-      axios.post(WebHookUrl, JSON.stringify({"text": logString})).then((response) => {
+      axios.post(WebHookUrl, JSON.stringify(message)).then((response) => {
         console.log(response);
       }).catch((e) => {
         console.log(e);

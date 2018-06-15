@@ -160,7 +160,6 @@ export default {
       }
     },
     onLocate: function(points) {
-      this.$store.dispatch('LogToSlack', points)
       if (points.length > 0) {
         this.found = true
       } else {
