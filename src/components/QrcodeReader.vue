@@ -175,7 +175,7 @@ export default {
       let queryString = content.slice(1).split('&')
       let queryObject = {}
       queryString.forEach(function(pair) {
-        pair = pair.split( = );
+        pair = pair.split('=');
         queryObject[pair[0]] = decodeURIComponent(pair[1] || '');
       })
       let result = JSON.parse(JSON.stringify(queryObject))
