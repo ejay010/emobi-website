@@ -29,7 +29,7 @@ export default {
     logo.crossOrigin = "Anonymous"
     logo.onload = () => {
       awesomeqr().create({
-        text: this.code,
+        text: '?invoiceId=' + this.code,
         size: this.size,
         logoImage: logo,
         callback: (data) => {

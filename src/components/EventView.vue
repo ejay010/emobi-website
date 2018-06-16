@@ -39,7 +39,10 @@
                   <h5>Location</h5>
               </div>
               <div class="card-body">
-                  <googleMap :showAutoComplete="false" :mapStyle="mapStyle" :MapMarker="locationData" :zoom="10"></googleMap>
+                  <googleMap v-if="locationData != null" :showAutoComplete="false" :mapStyle="mapStyle" :MapMarker="locationData" :zoom="10"></googleMap>
+                  <p v-else>
+                    Location not set
+                  </p>
               </div>
           </div>
 

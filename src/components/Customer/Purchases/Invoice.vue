@@ -1,7 +1,7 @@
 <template>
 <div class="container">
   <button type="button" class="btn btn-danger" @click="confirmDelete">Delete</button>
-  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#eCode">View E-Code</button>
+  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#list_eCode">View E-Code</button>
   <h5>{{ event_title }}</h5>
   <p>
     From: {{ start }} <br /> To: {{ finish }} <br /> Ticket: {{ event_title }}
@@ -11,17 +11,17 @@
       Guest List <small>{{rsvp.length}} RSVP's, {{guests.length}} Guest spot(s)</small>
     </div>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">
+      <button v-if="guests.length > 0" type="button" class="list-group-item list-group-item-action">
         {{ guests.length }} Guest Spot(s)
-      </li>
-      <li class="list-group-item" v-for="(spot, spot_index) in rsvp" :key="spot_index">
+      </button>
+      <button type="button" class="list-group-item list-group-item-action" v-for="(spot, spot_index) in rsvp" :key="spot_index" @click="showQr(spot_index, 'rsvp')">
         {{spot.f_name}} {{spot.l_name}}
         <br /> {{spot.email}}
-      </li>
+      </button>
     </ul>
   </div>
 
-  <div class="modal" tabindex="-1" role="dialog" id="eCode">
+  <div class="modal" tabindex="-1" role="dialog" id="list_eCode">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -43,6 +43,25 @@
       </div>
     </div>
   </div>
+
+  <div class="modal" tabindex="-1" role="dialog" id="eCodeCarrier">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">E-code</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <img :src="carrier_eCode" alt="">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -55,6 +74,7 @@ import awesomeqr from '../../../assets/awesome-qr/awesome-qr.js'
 import swal from 'sweetalert2'
 import axios from 'axios'
 import vqr from '../../Utilities/qrcodeGen.vue'
+import $ from 'jquery'
 export default {
   components: {
     vqr
@@ -62,6 +82,7 @@ export default {
   data() {
     return {
       invoice_data: {},
+      carrier_eCode: null
     }
   },
 
@@ -137,6 +158,21 @@ export default {
           })
         }
       })
+    },
+
+    showQr(index, list) {
+      const awesomeqr = require('../../../assets/awesome-qr/awesome-qr.js');
+      let listSpot = '_id=' +
+        this.qrcode + '&list=' + list + '&index=' + index
+      awesomeqr.eventUtil.create({
+        text: listSpot,
+        size: 350,
+        callback: (data) => {
+          this.carrier_eCode = data
+        }
+      });
+
+      $('#eCodeCarrier').modal('toggle')
     }
   }
 }

@@ -172,52 +172,64 @@ export default {
       }
     },
     onDecode: function(content) {
-      axios.create({
-        withCredentials: true
-      }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + content + '/validate').then((response) => {
-        // console.log('post response');
-        // console.log(response.data);
-        this.$store.dispatch('LogToSlack', response.data)
-        if (response.data.success) {
-          switch (response.data.message) {
-            case "Tickets Exhausted":
-              swal({
-                title: response.data.message,
-                text: 'This ticket is exhausted :(',
-                type: 'warning'
-              })
-              break;
-            case "Ticket Found":
-              swal({
-                title: response.data.message,
-                text: "Ticket Found, Please Verify Guests",
-                type: 'success'
-              })
-              this.InvoiceId = response.data.invoice._id
-              this.GuestList = response.data.invoice.contents
-              this.haveGuests = true
-              break;
-            default:
-              console.log(response);
-          }
-        } else {
-          if (response.data.message == "Redemption Error") {
-            swal({
-              title: response.data.message,
-              text: response.data.error.message,
-              type: 'error'
-            })
-          }
-          // console.log('communication error');
-          console.log(response);
-        }
-      }).catch((e) => {
-        swal({
-          title: "Sever communication Error",
-          text: e.message,
-          type: 'error'
-        })
+      let queryString = content.slice(1).split('&')
+      let queryObject = {}
+      queryString.forEach(function(pair) {
+        pair = pair.split( = );
+        queryObject[pair[0]] = decodeURIComponent(pair[1] || '');
       })
+      let result = JSON.parse(JSON.stringify(queryObject))
+      this.$store.dispatch('LogToSlack', 'QueryString', result)
+      if (result.list != null) {
+        this.$store.dispatch('LogToSlack', 'QueryObject', result)
+      } else {
+        axios.create({
+          withCredentials: true
+        }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.invoiceId + '/validate').then((response) => {
+          // console.log('post response');
+          // console.log(response.data);
+          this.$store.dispatch('LogToSlack', 'No query string', response.data)
+          if (response.data.success) {
+            switch (response.data.message) {
+              case "Tickets Exhausted":
+                swal({
+                  title: response.data.message,
+                  text: 'This ticket is exhausted :(',
+                  type: 'warning'
+                })
+                break;
+              case "Ticket Found":
+                swal({
+                  title: response.data.message,
+                  text: "Ticket Found, Please Verify Guests",
+                  type: 'success'
+                })
+                this.InvoiceId = response.data.invoice._id
+                this.GuestList = response.data.invoice.contents
+                this.haveGuests = true
+                break;
+              default:
+                console.log(response);
+            }
+          } else {
+            if (response.data.message == "Redemption Error") {
+              swal({
+                title: response.data.message,
+                text: response.data.error.message,
+                type: 'error'
+              })
+            }
+            // console.log('communication error');
+            console.log(response);
+          }
+        }).catch((e) => {
+          swal({
+            title: "Sever communication Error",
+            text: e.message,
+            type: 'error'
+          })
+        })
+      }
     }
   }
 }
