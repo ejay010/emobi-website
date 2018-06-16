@@ -130,16 +130,26 @@ export default new Vuex.Store({
     },
 
     LogToSlack (context, headline, log) {
+      let logValues = Object.values(log)
+      let logKeys = Object.keys(log)
       let fields = []
-      for (var key in log) {
-        if (log.hasOwnProperty(key)) {
-          fields.push({
-            "title": key,
-            "value": JSON.stringify(log[key]),
-            "short": false
-          })
-        }
+
+      for (var i = 0; i < logVales.length; i++) {
+        fields.push({
+          "title": logKeys[i],
+          "value": logValues[i],
+          "short": false
+        })
       }
+      // for (var key in log) {
+      //   if (log.hasOwnProperty(key)) {
+      //     fields.push({
+      //       "title": key,
+      //       "value": JSON.stringify(log[key]),
+      //       "short": false
+      //     })
+      //   }
+      // }
       let message = {
         text: headline,
         attachments: [
