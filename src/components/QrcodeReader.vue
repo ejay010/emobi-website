@@ -110,7 +110,10 @@ export default {
       }).post(url, {
         GuestList: this.GuestList
       }).then((response) => {
-        this.$store.dispatch('LogToSlack', 'From SubmitGuestList()', response.data)
+        this.$store.dispatch('LogToSlack', {
+          headline: 'From SubmitGuestList()',
+          log: response.data
+        })
         this.loading = false
         if (response.data.success) {
           swal({
@@ -141,22 +144,40 @@ export default {
       } catch (error) {
         if (error.name === 'NotAllowedError') {
           // user denied camera access permisson
-          this.$store.dispatch('LogToSlack', 'NotAllowedError', error)
+          this.$store.dispatch('LogToSlack', {
+            headline: 'NotAllowedError',
+            log: error
+          })
         } else if (error.name === 'NotFoundError') {
           // no suitable camera device installed
-          this.$store.dispatch('LogToSlack', 'NotFoundError', error)
+          this.$store.dispatch('LogToSlack', {
+            headline: 'NotFoundError',
+            log: error
+          })
         } else if (error.name === 'NotSupportedError') {
           // page is not served over HTTPS (or localhost)
-          this.$store.dispatch('LogToSlack', 'NotSupportedError', error)
+          this.$store.dispatch('LogToSlack', {
+            headline: 'NotSupportedError',
+            log: error
+          })
         } else if (error.name === 'NotReadableError') {
           // maybe camera is already in use
-          this.$store.dispatch('LogToSlack', 'NotReadableError', error)
+          this.$store.dispatch('LogToSlack', {
+            headline: 'NotReadableError',
+            log: error
+          })
         } else if (error.name === 'OverconstrainedError') {
-          this.$store.dispatch('LogToSlack', 'OverconstrainedError', error)
+          this.$store.dispatch('LogToSlack', {
+            headline: 'OverconstrainedError',
+            log: error
+          })
           // passed constraints don't match any camera. Did you requested the front camera although there is none?
         } else {
           // browser is probably lacking features (WebRTC, Canvas)
-          this.$store.dispatch('LogToSlack', 'From onInit() catchAll', error)
+          this.$store.dispatch('LogToSlack', {
+            headline: 'From onInit() catchAll',
+            log: error
+          })
         }
       } finally {
         // hide loading indicator
@@ -179,16 +200,25 @@ export default {
         queryObject[pair[0]] = decodeURIComponent(pair[1] || '');
       })
       let result = JSON.parse(JSON.stringify(queryObject))
-      this.$store.dispatch('LogToSlack', 'QueryString', result)
+      this.$store.dispatch('LogToSlack', {
+        headline: 'QueryString',
+        log: result
+      })
       if (result.list != null) {
-        this.$store.dispatch('LogToSlack', 'QueryObject', result)
+        this.$store.dispatch('LogToSlack', {
+          headline: 'QueryObject',
+          log: result
+        })
       } else {
         axios.create({
           withCredentials: true
         }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.invoiceId + '/validate').then((response) => {
           // console.log('post response');
           // console.log(response.data);
-          this.$store.dispatch('LogToSlack', 'No query string', response.data)
+          this.$store.dispatch('LogToSlack', {
+            headline: 'No query string',
+            log: response.data
+          })
           if (response.data.success) {
             switch (response.data.message) {
               case "Tickets Exhausted":

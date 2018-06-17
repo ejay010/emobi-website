@@ -162,8 +162,7 @@ export default {
 
     showQr(index, list) {
       const awesomeqr = require('../../../assets/awesome-qr/awesome-qr.js');
-      let listSpot = '_id=' +
-        this.qrcode + '&list=' + list + '&index=' + index
+      let listSpot = '_id=' + this.qrcode + '&list=' + list + '&index=' + index
       awesomeqr.eventUtil.create({
         text: listSpot,
         size: 350,
