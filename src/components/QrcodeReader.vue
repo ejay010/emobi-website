@@ -222,63 +222,63 @@ export default {
         axios.create({
           withCredentials: true
         }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.id + '/validate').then((response) => {
-            this.$store.dispatch('LogToSlack', {
-              headline: 'Server Response',
-              log: response.data
-            })
-            if (response.data.success) {
-              switch (response.data.message) {
-                case "Tickets Exhausted":
-                  swal({
-                    title: response.data.message,
-                    text: 'This ticket is exhausted :(',
-                    type: 'warning'
-                  })
-                  break;
-
-                case "Ticket Found":
-                  swal({
-                    title: response.data.message,
-                    text: "Ticket Found, Please Confirm Guests",
-                    type: 'success'
-                  })
-                  this.InvoiceId = response.data.invoice._id
-                  this.GuestList = response.data.invoice.contents
-                  this.haveGuests = true
-                  break;
-                default:
-                  this.$store.dispatch('LogToSlack', {
-                    headline: 'Scanning Error',
-                    log: response.data
-                  })
-              }
-            } else {
-              if (response.data.message == "Redemption Error") {
+          this.$store.dispatch('LogToSlack', {
+            headline: 'Server Response',
+            log: response.data
+          })
+          if (response.data.success) {
+            switch (response.data.message) {
+              case "Tickets Exhausted":
                 swal({
                   title: response.data.message,
-                  text: response.data.error.message,
-                  type: 'error'
+                  text: 'This ticket is exhausted :(',
+                  type: 'warning'
                 })
-              }
+                break;
 
-              this.$store.dispatch('LogToSlack', {
-                headline: 'Communication Error',
-                log: response.data
+              case "Ticket Found":
+                swal({
+                  title: response.data.message,
+                  text: "Ticket Found, Please Confirm Guests",
+                  type: 'success'
+                })
+                this.InvoiceId = response.data.invoice._id
+                this.GuestList = response.data.invoice.contents
+                this.haveGuests = true
+                break;
+              default:
+                this.$store.dispatch('LogToSlack', {
+                  headline: 'Scanning Error',
+                  log: response.data
+                })
+            }
+          } else {
+            if (response.data.message == "Redemption Error") {
+              swal({
+                title: response.data.message,
+                text: response.data.error.message,
+                type: 'error'
               })
             }
-          ).catch((e) => {
-            swal({
-              title: "Server Communication Error",
-              message: e.message,
-              type: 'error'
-            })
+
             this.$store.dispatch('LogToSlack', {
               headline: 'Communication Error',
-              log: e
+              log: response.data
             })
+          }
+        }).catch((e) => {
+          swal({
+            title: "Server Communication Error",
+            message: e.message,
+            type: 'error'
           })
-        }
+          this.$store.dispatch('LogToSlack', {
+            headline: 'Communication Error',
+            log: e
+          })
+        })
       }
     }
   }
+}
 </script>
