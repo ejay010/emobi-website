@@ -97,6 +97,17 @@ export default {
         }
       }
     }
+    guests: function() {
+      let guestPasses = []
+      if (this.GuestList.length > 0) {
+        this.GuestList.forEach((element) => {
+          if (element.guest_spot) {
+            guestPasses.push(element)
+          }
+        })
+      }
+      return guestPasses;
+    }
   },
   methods: {
     validateGuest(guest_index) {
@@ -211,59 +222,63 @@ export default {
         axios.create({
           withCredentials: true
         }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.id + '/validate').then((response) => {
-          this.$store.dispatch('LogToSlack', {
-            headline: 'Server Response',
-            log: response.data
+            this.$store.dispatch('LogToSlack', {
+              headline: 'Server Response',
+              log: response.data
+            })
+            if (response.data.success) {
+              switch (response.data.message) {
+                case "Tickets Exhausted":
+                  swal({
+                    title: response.data.message,
+                    text: 'This ticket is exhausted :(',
+                    type: 'warning'
+                  })
+                  break;
+
+                case "Ticket Found":
+                  swal({
+                    title: response.data.message,
+                    text: "Ticket Found, Please Confirm Guests",
+                    type: 'success'
+                  })
+                  this.InvoiceId = response.data.invoice._id
+                  this.GuestList = response.data.invoice.contents
+                  this.haveGuests = true
+                  break;
+                default:
+                  this.$store.dispatch('LogToSlack', {
+                    headline: 'Scanning Error',
+                    log: response.data
+                  })
+              }
+            } else {
+              if (response.data.message == "Redemption Error") {
+                swal({
+                  title: response.data.message,
+                  text: response.data.error.message,
+                  type: 'error'
+                })
+              }
+
+              this.$store.dispatch('LogToSlack', {
+                headline: 'Communication Error',
+                log: response.data
+              })
+            }
+          ).catch((e) => {
+            swal({
+              title: "Server Communication Error",
+              message: e.message,
+              type: 'error'
+            })
+            this.$store.dispatch('LogToSlack', {
+              headline: 'Communication Error',
+              log: e
+            })
           })
-        })
-        //     // console.log('post response');
-        //     // console.log(response.data);
-        //     this.$store.dispatch('LogToSlack', {
-        //       headline: 'No query string',
-        //       log: response.data
-        //     })
-        //     if (response.data.success) {
-        //       switch (response.data.message) {
-        //         case "Tickets Exhausted":
-        //           swal({
-        //             title: response.data.message,
-        //             text: 'This ticket is exhausted :(',
-        //             type: 'warning'
-        //           })
-        //           break;
-        //         case "Ticket Found":
-        //           swal({
-        //             title: response.data.message,
-        //             text: "Ticket Found, Please Verify Guests",
-        //             type: 'success'
-        //           })
-        //           this.InvoiceId = response.data.invoice._id
-        //           this.GuestList = response.data.invoice.contents
-        //           this.haveGuests = true
-        //           break;
-        //         default:
-        //           console.log(response);
-        //       }
-        //     } else {
-        //       if (response.data.message == "Redemption Error") {
-        //         swal({
-        //           title: response.data.message,
-        //           text: response.data.error.message,
-        //           type: 'error'
-        //         })
-        //       }
-        //       // console.log('communication error');
-        //       console.log(response);
-        //     }
-        //   }).catch((e) => {
-        //     swal({
-        //       title: "Sever communication Error",
-        //       text: e.message,
-        //       type: 'error'
-        //     })
-        //   })
+        }
       }
     }
   }
-}
 </script>
