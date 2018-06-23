@@ -1,7 +1,7 @@
 <template>
 <span>
 
-    <div class="card" v-if="!FullParty">
+    <div class="card" v-if="!haveResponse">
     <div class="card-header">
       Please Scan Ticket
     </div>
@@ -26,7 +26,7 @@
 </div>
 </div>
 
-<div class="card" v-else>
+<div class="card" v-if="!FullParty">
   <div class="card-header">
     Validate and Verify Guest List
     <spinner v-if="this.loading"></spinner>
@@ -125,7 +125,8 @@ export default {
       GuestList: [],
       qrCodeData: {},
       PartOfParty: false,
-      TicketData: {}
+      TicketData: {},
+      haveResponse: false
     }
   },
   computed: {
@@ -295,6 +296,7 @@ export default {
             log: response.data
           })
           if (response.data.success) {
+            this.haveResponse = true
             switch (response.data.message) {
               case "Tickets Exhausted":
                 swal({
