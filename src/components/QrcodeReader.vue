@@ -285,6 +285,7 @@ export default {
         log: result
       })
       this.qrCodeData = result
+      console.log(this.qrCodeData);
       if (result.list != null) {
         axios.create({
           withCredentials: true
@@ -309,10 +310,11 @@ export default {
                   text: "Ticket Found, Please Confirm Guests",
                   type: 'success'
                 })
-                // this.TicketData = response.data
+                this.TicketData = response.data
                 this.InvoiceId = response.data.invoice._id
                 this.GuestList = response.data.invoice.contents
-                if (qrCodeData.list != null) {
+                console.log(this.TicketData);
+                if (this.qrCodeData.list != null) {
                   this.PartOfParty = true
                 } else {
                   this.FullParty = true
