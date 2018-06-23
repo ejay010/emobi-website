@@ -16,7 +16,7 @@
   <div class="alert alert-success" role="alert" v-if="found">
     Found E-code!
   </div>
-  <qrcode-reader class="card-img" @init="onInit" @decode="onDecode" @locate="onLocate">
+  <qrcode-reader class="card-img" @init="onInit" @decode="onDecode" @locate="onLocate" :track="true">
   </qrcode-reader>
 </div>
 <div class="alert alert-warning" role="alert" v-if="!cameraOn">
