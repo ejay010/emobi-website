@@ -96,7 +96,7 @@ export default {
           'bg-danger': true
         }
       }
-    }
+    },
     guests: function() {
       let guestPasses = []
       if (this.GuestList.length > 0) {
