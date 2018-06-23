@@ -16,7 +16,7 @@
   <div class="alert alert-success" role="alert" v-if="found">
     Found E-code!
   </div>
-  <qrcode-reader class="card-img" @init="onInit" @decode="onDecode" @locate="onLocate" :track="true">
+  <qrcode-reader class="card-img" @init="onInit" @decode="onDecode" @locate="onLocate" :track="repaintLocation">
   </qrcode-reader>
 </div>
 <div class="alert alert-warning" role="alert" v-if="!cameraOn">
@@ -111,6 +111,28 @@ export default {
     }
   },
   methods: {
+    repaintLocation(location, ctx) {
+      if (location !== null) {
+        const {
+          topLeftCorner,
+          topRightCorner,
+          bottomLeftCorner,
+          bottomRightCorner,
+        } = location
+
+        ctx.strokeStyle = 'blue' // instead of red
+
+        ctx.beginPath()
+        ctx.moveTo(topLeftCorner.x, topLeftCorner.y)
+        ctx.lineTo(bottomLeftCorner.x, bottomLeftCorner.y)
+        ctx.lineTo(bottomRightCorner.x, bottomRightCorner.y)
+        ctx.lineTo(topRightCorner.x, topRightCorner.y)
+        ctx.lineTo(topLeftCorner.x, topLeftCorner.y)
+        ctx.closePath()
+
+        ctx.stroke()
+      }
+    },
     validateGuest(guest_index) {
       this.GuestList[guest_index].outstanding = false
     },
