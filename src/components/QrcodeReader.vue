@@ -309,7 +309,7 @@ export default {
                   text: "Ticket Found, Please Confirm Guests",
                   type: 'success'
                 })
-                this.TicketData = response.data
+                // this.TicketData = response.data
                 this.InvoiceId = response.data.invoice._id
                 this.GuestList = response.data.invoice.contents
                 if (qrCodeData.list != null) {
@@ -346,7 +346,7 @@ export default {
           })
           this.$store.dispatch('LogToSlack', {
             headline: 'Communication Error',
-            log: e
+            log: e.message
           })
         })
       }
