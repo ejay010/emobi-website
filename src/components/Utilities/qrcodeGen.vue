@@ -1,5 +1,5 @@
 <template>
-<img v-bind:src="qrcodeImg" class="mx-auto d-block"></img>
+<img v-bind:src="qrcodeImg" class="rounded mx-auto d-block"></img>
 </template>
 
 <style>

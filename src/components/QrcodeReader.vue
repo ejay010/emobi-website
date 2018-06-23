@@ -194,7 +194,6 @@ export default {
     },
     onDecode: function(content) {
       let queryString = content.slice(1).split('&')
-      console.log(queryString);
       this.$store.dispatch('LogToSlack', {
         headline: 'testingStringInput',
         log: queryString

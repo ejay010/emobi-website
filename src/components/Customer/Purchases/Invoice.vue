@@ -11,8 +11,8 @@
       Guest List <small>{{rsvp.length}} RSVP's, {{guests.length}} Guest spot(s)</small>
     </div>
     <ul class="list-group list-group-flush">
-      <button v-if="guests.length > 0" type="button" class="list-group-item list-group-item-action">
-        {{ guests.length }} Guest Spot(s)
+      <button v-if="guests.length > 0" type="button" v-for="(guest_pass, guest_index) in guests" class="list-group-item list-group-item-action" @click="showQr(guest_index, 'guest')">
+        Guest Pass # {{ guest_index + 1}}
       </button>
       <button type="button" class="list-group-item list-group-item-action" v-for="(spot, spot_index) in rsvp" :key="spot_index" @click="showQr(spot_index, 'rsvp')">
         {{spot.f_name}} {{spot.l_name}}
@@ -32,10 +32,6 @@
         </div>
         <div class="modal-body">
           <vqr :code="qrcode"></vqr>
-          <!-- <div class="card">
-            <div class="card-body">
-            </div>
-          </div> -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -54,7 +50,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <img :src="carrier_eCode" alt="">
+          <img :src="carrier_eCode" alt="" class="rounded mx-auto d-block">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
