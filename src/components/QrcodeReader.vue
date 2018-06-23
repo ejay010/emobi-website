@@ -133,12 +133,11 @@ export default {
     },
     async onInit(promise) {
       // show loading indicator
-
       this.cameraLoading = true
       try {
         await promise
-        this.cameraLoading = false
-        this.cameraOn = true
+        // this.cameraLoading = false
+        // this.cameraOn = true
 
         // successfully initialized
       } catch (error) {
@@ -208,62 +207,62 @@ export default {
         headline: 'QueryString',
         log: result
       })
-      // if (result.list != null) {
-      //   this.$store.dispatch('LogToSlack', {
-      //     headline: 'QueryObject',
-      //     log: result
-      //   })
-      // } else {
-      //   axios.create({
-      //     withCredentials: true
-      //   }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.invoiceId + '/validate').then((response) => {
-      //     // console.log('post response');
-      //     // console.log(response.data);
-      //     this.$store.dispatch('LogToSlack', {
-      //       headline: 'No query string',
-      //       log: response.data
-      //     })
-      //     if (response.data.success) {
-      //       switch (response.data.message) {
-      //         case "Tickets Exhausted":
-      //           swal({
-      //             title: response.data.message,
-      //             text: 'This ticket is exhausted :(',
-      //             type: 'warning'
-      //           })
-      //           break;
-      //         case "Ticket Found":
-      //           swal({
-      //             title: response.data.message,
-      //             text: "Ticket Found, Please Verify Guests",
-      //             type: 'success'
-      //           })
-      //           this.InvoiceId = response.data.invoice._id
-      //           this.GuestList = response.data.invoice.contents
-      //           this.haveGuests = true
-      //           break;
-      //         default:
-      //           console.log(response);
-      //       }
-      //     } else {
-      //       if (response.data.message == "Redemption Error") {
-      //         swal({
-      //           title: response.data.message,
-      //           text: response.data.error.message,
-      //           type: 'error'
-      //         })
-      //       }
-      //       // console.log('communication error');
-      //       console.log(response);
-      //     }
-      //   }).catch((e) => {
-      //     swal({
-      //       title: "Sever communication Error",
-      //       text: e.message,
-      //       type: 'error'
-      //     })
-      //   })
-      // }
+      if (result.list != null) {
+        axios.create({
+          withCredentials: true
+        }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.id + '/validate').then((response) => {
+          this.$store.dispatch('LogToSlack', {
+            headline: 'Server Response',
+            log: response.data
+          })
+        })
+        //     // console.log('post response');
+        //     // console.log(response.data);
+        //     this.$store.dispatch('LogToSlack', {
+        //       headline: 'No query string',
+        //       log: response.data
+        //     })
+        //     if (response.data.success) {
+        //       switch (response.data.message) {
+        //         case "Tickets Exhausted":
+        //           swal({
+        //             title: response.data.message,
+        //             text: 'This ticket is exhausted :(',
+        //             type: 'warning'
+        //           })
+        //           break;
+        //         case "Ticket Found":
+        //           swal({
+        //             title: response.data.message,
+        //             text: "Ticket Found, Please Verify Guests",
+        //             type: 'success'
+        //           })
+        //           this.InvoiceId = response.data.invoice._id
+        //           this.GuestList = response.data.invoice.contents
+        //           this.haveGuests = true
+        //           break;
+        //         default:
+        //           console.log(response);
+        //       }
+        //     } else {
+        //       if (response.data.message == "Redemption Error") {
+        //         swal({
+        //           title: response.data.message,
+        //           text: response.data.error.message,
+        //           type: 'error'
+        //         })
+        //       }
+        //       // console.log('communication error');
+        //       console.log(response);
+        //     }
+        //   }).catch((e) => {
+        //     swal({
+        //       title: "Sever communication Error",
+        //       text: e.message,
+        //       type: 'error'
+        //     })
+        //   })
+      }
     }
   }
 }
