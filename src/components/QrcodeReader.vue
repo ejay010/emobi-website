@@ -1,7 +1,7 @@
 <template>
 <span>
 
-    <div class="card" v-if="!haveGuests">
+    <div class="card" v-if="!FullParty">
     <div class="card-header">
       Please Scan Ticket
     </div>
@@ -53,6 +53,48 @@
     <button class="btn btn-success" @click="SubmitGuestList">Guest's Confirmed</button>
   </div>
 </div>
+
+<div v-if="PartOfParty">
+  <p>
+    A SINGLE MEMBER of a party is here. Confirm Cross check.
+  </p>
+  <div class="card">
+    <div class="card-header">
+      E-Ticket Info
+    </div>
+    <div class="card-body">
+      <span v-if="qrCodeData.list == 'rsvp'">
+
+      </span>
+
+      <span v-if="qrCodeData.list == 'guest'">
+
+      </span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      Guest List
+    </div>
+    <div class="card-body">
+      <div class="list-group">
+        <button type="button" class="btn btn-default list-group-item" v-for="(guest, guest_index) in GuestList" :key="guest_index" @click="validateGuest(guest_index)">
+          <span v-if="guest.guest_spot">
+            Guest Spot
+          </span>
+          <span v-else>
+            Name: {{guest.f_name}} {{guest.l_name}} <br />
+            email: {{guest.email}} <br />
+            Gender: {{guest.gender}}
+          </span>
+          <icon name="check" v-if="guest.outstanding != true"></icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
 </span>
 </template>
 
@@ -77,11 +119,13 @@ export default {
       cameraLoading: true,
       cameraOn: false,
       found: false,
-      haveGuests: false,
+      FullParty: false,
       loading: false,
       InvoiceId: "",
       GuestList: [],
-      qrCodeData: {}
+      qrCodeData: {},
+      PartOfParty: false,
+      TicketData: {}
     }
   },
   computed: {
@@ -99,15 +143,10 @@ export default {
       }
     },
     guests: function() {
-      let guestPasses = []
-      if (this.GuestList.length > 0) {
-        this.GuestList.forEach((element) => {
-          if (element.guest_spot) {
-            guestPasses.push(element)
-          }
-        })
-      }
-      return guestPasses;
+      return this.TicketData.guest;
+    },
+    rsvp: function() {
+      return this.TicketData.rsvp
     }
   },
   methods: {
@@ -134,7 +173,11 @@ export default {
       }
     },
     validateGuest(guest_index) {
-      this.GuestList[guest_index].outstanding = false
+      if (this.GuestList[guest_index].outstanding) {
+        this.GuestList[guest_index].outstanding = false
+      } else {
+        this.GuestList[guest_index].outstanding = true
+      }
     },
     SubmitGuestList() {
       this.loading = true
@@ -266,9 +309,14 @@ export default {
                   text: "Ticket Found, Please Confirm Guests",
                   type: 'success'
                 })
+                this.TicketData = response.data
                 this.InvoiceId = response.data.invoice._id
                 this.GuestList = response.data.invoice.contents
-                this.haveGuests = true
+                if (qrCodeData.list != null) {
+                  this.PartOfParty = true
+                } else {
+                  this.FullParty = true
+                }
                 break;
               default:
                 this.$store.dispatch('LogToSlack', {
