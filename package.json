@@ -30,7 +30,7 @@
     "vue-awesome": "^2.3.4",
     "vue-qart": "^2.1.1",
     "vue-qr": "^1.2.8",
-    "vue-qrcode-reader": "^0.7.2",
+    "vue-qrcode-reader": "^0.8.3",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^2.1.1",
     "vue-spinner": "^1.0.3",
