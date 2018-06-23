@@ -80,7 +80,8 @@ export default {
       haveGuests: false,
       loading: false,
       InvoiceId: "",
-      GuestList: []
+      GuestList: [],
+      qrCodeData: {}
     }
   },
   computed: {
@@ -218,6 +219,7 @@ export default {
         headline: 'QueryString',
         log: result
       })
+      this.qrCodeData = result
       if (result.list != null) {
         axios.create({
           withCredentials: true
