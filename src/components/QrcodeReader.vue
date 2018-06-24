@@ -1,100 +1,30 @@
 <template>
 <span>
+  <router-link :to="{ name: 'CustomerEventList', params: {} }" class="btn btn-primary">Back to Event Menu</router-link>
+<hr />
+<div class="alert alert-warning" role="alert" v-if="!cameraOn">
+  Please allow e-mobie to access your devices' camera.
+</div>
+  <div class="alert alert-warning" role="alert" v-if="found == false && cameraOn">
+    Waiting for E-code...
+  </div>
+  <div class="alert alert-success" role="alert" v-if="found">
+Found E-code!
+</div>
 
-    <div class="card" v-if="!haveResponse">
-    <div class="card-header">
-      Please Scan Ticket
-    </div>
+    <div class="card">
     <div class="card-body">
       <span v-if="cameraLoading">
         <spinner></spinner>
       </span>
 <div class="p-1">
-  <div class="alert alert-warning" role="alert" v-if="found == false">
-    Waiting for E-code...
-  </div>
-  <div class="alert alert-success" role="alert" v-if="found">
-    Found E-code!
-  </div>
   <qrcode-reader class="card-img" @init="onInit" @decode="onDecode" @locate="onLocate" :track="repaintLocation">
   </qrcode-reader>
 </div>
-<div class="alert alert-warning" role="alert" v-if="!cameraOn">
-  Please allow e-mobie to access your devices' camera.
-</div>
-<router-link :to="{ name: 'CustomerEventList', params: {} }" class="btn btn-primary">Back to Event Menu</router-link>
 </div>
 </div>
 
-<div class="card" v-if="!FullParty">
-  <div class="card-header">
-    Validate and Verify Guest List
-    <spinner v-if="this.loading"></spinner>
-  </div>
-  <div class="card-body">
-    <p>
-      Click on RSVP or Guest spot to confirm thier presence.
-    </p>
-    <div class="list-group">
-      <button type="button" class="btn btn-default list-group-item" v-for="(guest, guest_index) in GuestList" :key="guest_index" @click="validateGuest(guest_index)">
-        <span v-if="guest.guest_spot">
-          Guest Spot
-        </span>
-        <span v-else>
-          Name: {{guest.f_name}} {{guest.l_name}} <br />
-          email: {{guest.email}} <br />
-          Gender: {{guest.gender}}
-        </span>
-        <icon name="check" v-if="guest.outstanding != true"></icon>
-      </button>
-    </div>
-  </div>
-  <div class="card-footer">
-    <button class="btn btn-success" @click="SubmitGuestList">Guest's Confirmed</button>
-  </div>
-</div>
 
-<div v-if="PartOfParty">
-  <p>
-    A SINGLE MEMBER of a party is here. Confirm Cross check.
-  </p>
-  <div class="card">
-    <div class="card-header">
-      E-Ticket Info
-    </div>
-    <div class="card-body">
-      <span v-if="qrCodeData.list == 'rsvp'">
-
-      </span>
-
-      <span v-if="qrCodeData.list == 'guest'">
-
-      </span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      Guest List
-    </div>
-    <div class="card-body">
-      <div class="list-group">
-        <button type="button" class="btn btn-default list-group-item" v-for="(guest, guest_index) in GuestList" :key="guest_index" @click="validateGuest(guest_index)">
-          <span v-if="guest.guest_spot">
-            Guest Spot
-          </span>
-          <span v-else>
-            Name: {{guest.f_name}} {{guest.l_name}} <br />
-            email: {{guest.email}} <br />
-            Gender: {{guest.gender}}
-          </span>
-          <icon name="check" v-if="guest.outstanding != true"></icon>
-        </button>
-      </div>
-    </div>
-  </div>
-
-</div>
 </span>
 </template>
 
@@ -119,36 +49,12 @@ export default {
       cameraLoading: true,
       cameraOn: false,
       found: false,
-      FullParty: false,
       loading: false,
-      InvoiceId: "",
-      GuestList: [],
       qrCodeData: {},
-      PartOfParty: false,
-      TicketData: {},
-      haveResponse: false
     }
   },
   computed: {
-    located: function() {
-      if (this.found) {
-        return {
-          'text-white': true,
-          'bg-success': true,
-        }
-      } else {
-        return {
-          'text-white': true,
-          'bg-danger': true
-        }
-      }
-    },
-    guests: function() {
-      return this.TicketData.guest;
-    },
-    rsvp: function() {
-      return this.TicketData.rsvp
-    }
+
   },
   methods: {
     repaintLocation(location, ctx) {
@@ -173,42 +79,42 @@ export default {
         ctx.stroke()
       }
     },
-    validateGuest(guest_index) {
-      if (this.GuestList[guest_index].outstanding) {
-        this.GuestList[guest_index].outstanding = false
-      } else {
-        this.GuestList[guest_index].outstanding = true
-      }
-    },
-    SubmitGuestList() {
-      this.loading = true
-      let url = process.env.VUE_APP_API_URL + '/invoice/' + this.$route.params.eventId + '/' + this.InvoiceId + '/redeem'
-      axios.create({
-        withCredentials: true
-      }).post(url, {
-        GuestList: this.GuestList
-      }).then((response) => {
-        this.$store.dispatch('LogToSlack', {
-          headline: 'From SubmitGuestList()',
-          log: response.data
-        })
-        this.loading = false
-        if (response.data.success) {
-          swal({
-            title: "Guests Confirmed",
-            text: "Ok, they're on the list :)",
-            type: 'success'
-          })
-        }
-      }).catch((e) => {
-        this.loading = false
-        swal({
-          title: "Communication Error",
-          text: e.message,
-          type: 'error'
-        })
-      })
-    },
+    // validateGuest(guest_index) {
+    //   if (this.GuestList[guest_index].outstanding) {
+    //     this.GuestList[guest_index].outstanding = false
+    //   } else {
+    //     this.GuestList[guest_index].outstanding = true
+    //   }
+    // },
+    // SubmitGuestList() {
+    //   this.loading = true
+    //   let url = process.env.VUE_APP_API_URL + '/invoice/' + this.$route.params.eventId + '/' + this.InvoiceId + '/redeem'
+    //   axios.create({
+    //     withCredentials: true
+    //   }).post(url, {
+    //     GuestList: this.GuestList
+    //   }).then((response) => {
+    //     this.$store.dispatch('LogToSlack', {
+    //       headline: 'From SubmitGuestList()',
+    //       log: response.data
+    //     })
+    //     this.loading = false
+    //     if (response.data.success) {
+    //       swal({
+    //         title: "Guests Confirmed",
+    //         text: "Ok, they're on the list :)",
+    //         type: 'success'
+    //       })
+    //     }
+    //   }).catch((e) => {
+    //     this.loading = false
+    //     swal({
+    //       title: "Communication Error",
+    //       text: e.message,
+    //       type: 'error'
+    //     })
+    //   })
+    // },
     async onInit(promise) {
       // show loading indicator
       this.cameraLoading = true
@@ -286,73 +192,78 @@ export default {
         log: result
       })
       this.qrCodeData = result
-      // console.log(this.qrCodeData);
-      if (result.list != null) {
-        axios.create({
-          withCredentials: true
-        }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.id + '/validate').then((response) => {
-          this.$store.dispatch('LogToSlack', {
-            headline: 'Server Response',
-            log: response.data
-          })
-          if (response.data.success) {
-            this.haveResponse = true
-            switch (response.data.message) {
-              case "Tickets Exhausted":
-                swal({
-                  title: response.data.message,
-                  text: 'This ticket is exhausted :(',
-                  type: 'warning'
-                })
-                break;
-
-              case "Ticket Found":
-                swal({
-                  title: response.data.message,
-                  text: "Ticket Found, Please Confirm Guests",
-                  type: 'success'
-                })
-                this.TicketData = response.data.invoice
-                this.InvoiceId = response.data.invoice._id
-                this.GuestList = response.data.invoice.contents
-                if (this.qrCodeData.list != null) {
-                  this.PartOfParty = true
-                } else {
-                  this.FullParty = true
-                }
-                break;
-              default:
-                this.$store.dispatch('LogToSlack', {
-                  headline: 'Scanning Error',
-                  log: response.data
-                })
-            }
-          } else {
-            if (response.data.message == "Redemption Error") {
-              swal({
-                title: response.data.message,
-                text: response.data.error.message,
-                type: 'error'
-              })
-            }
-
-            this.$store.dispatch('LogToSlack', {
-              headline: 'Communication Error',
-              log: response.data
-            })
-          }
-        }).catch((e) => {
-          swal({
-            title: "Server Communication Error",
-            message: e.message,
-            type: 'error'
-          })
-          this.$store.dispatch('LogToSlack', {
-            headline: 'Communication Error',
-            log: e.message
-          })
-        })
-      }
+      axios.create({
+        withCredentials: true
+      }).post(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' +
+        this.qrCodeData.invoiceId + '/validate').then((response) => {
+        console.log(response.data);
+      })
+      // if (result.list != null) {
+      //   axios.create({
+      //     withCredentials: true
+      //   }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.id + '/validate').then((response) => {
+      //     this.$store.dispatch('LogToSlack', {
+      //       headline: 'Server Response',
+      //       log: response.data
+      //     })
+      //     if (response.data.success) {
+      //       this.haveResponse = true
+      //       switch (response.data.message) {
+      //         case "Tickets Exhausted":
+      //           swal({
+      //             title: response.data.message,
+      //             text: 'This ticket is exhausted :(',
+      //             type: 'warning'
+      //           })
+      //           break;
+      //
+      //         case "Ticket Found":
+      //           swal({
+      //             title: response.data.message,
+      //             text: "Ticket Found, Please Confirm Guests",
+      //             type: 'success'
+      //           })
+      //           this.TicketData = response.data.invoice
+      //           this.InvoiceId = response.data.invoice._id
+      //           this.GuestList = response.data.invoice.contents
+      //           if (this.qrCodeData.list != null) {
+      //             this.PartOfParty = true
+      //           } else {
+      //             this.FullParty = true
+      //           }
+      //           break;
+      //         default:
+      //           this.$store.dispatch('LogToSlack', {
+      //             headline: 'Scanning Error',
+      //             log: response.data
+      //           })
+      //       }
+      //     } else {
+      //       if (response.data.message == "Redemption Error") {
+      //         swal({
+      //           title: response.data.message,
+      //           text: response.data.error.message,
+      //           type: 'error'
+      //         })
+      //       }
+      //
+      //       this.$store.dispatch('LogToSlack', {
+      //         headline: 'Communication Error',
+      //         log: response.data
+      //       })
+      //     }
+      //   }).catch((e) => {
+      //     swal({
+      //       title: "Server Communication Error",
+      //       message: e.message,
+      //       type: 'error'
+      //     })
+      //     this.$store.dispatch('LogToSlack', {
+      //       headline: 'Communication Error',
+      //       log: e.message
+      //     })
+      //   })
+      // }
     }
   }
 }

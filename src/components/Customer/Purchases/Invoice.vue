@@ -94,7 +94,7 @@ export default {
   computed: {
     qrcode() {
       if (this.invoice_data != null) {
-        return this.invoice_data._id
+        return "?eventId=" + this.invoice_data.eventId._id + "&invoiceId=" + this.invoice_data._id + "&isPurchaser=true"
       }
     },
     start() {
@@ -158,7 +158,7 @@ export default {
 
     showQr(index, list) {
       const awesomeqr = require('../../../assets/awesome-qr/awesome-qr.js');
-      let listSpot = '_id=' + this.qrcode + '&list=' + list + '&index=' + index
+      let listSpot = 'invoiceId=' + this.invoice_data._id + '&list=' + list + '&index=' + index + '&eventId=' + this.invoice_data.eventId._id
       awesomeqr.eventUtil.create({
         text: listSpot,
         size: 350,
