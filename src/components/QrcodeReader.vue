@@ -79,42 +79,6 @@ export default {
         ctx.stroke()
       }
     },
-    // validateGuest(guest_index) {
-    //   if (this.GuestList[guest_index].outstanding) {
-    //     this.GuestList[guest_index].outstanding = false
-    //   } else {
-    //     this.GuestList[guest_index].outstanding = true
-    //   }
-    // },
-    // SubmitGuestList() {
-    //   this.loading = true
-    //   let url = process.env.VUE_APP_API_URL + '/invoice/' + this.$route.params.eventId + '/' + this.InvoiceId + '/redeem'
-    //   axios.create({
-    //     withCredentials: true
-    //   }).post(url, {
-    //     GuestList: this.GuestList
-    //   }).then((response) => {
-    //     this.$store.dispatch('LogToSlack', {
-    //       headline: 'From SubmitGuestList()',
-    //       log: response.data
-    //     })
-    //     this.loading = false
-    //     if (response.data.success) {
-    //       swal({
-    //         title: "Guests Confirmed",
-    //         text: "Ok, they're on the list :)",
-    //         type: 'success'
-    //       })
-    //     }
-    //   }).catch((e) => {
-    //     this.loading = false
-    //     swal({
-    //       title: "Communication Error",
-    //       text: e.message,
-    //       type: 'error'
-    //     })
-    //   })
-    // },
     async onInit(promise) {
       // show loading indicator
       this.cameraLoading = true
@@ -198,72 +162,6 @@ export default {
         this.qrCodeData.invoiceId + '/validate').then((response) => {
         console.log(response.data);
       })
-      // if (result.list != null) {
-      //   axios.create({
-      //     withCredentials: true
-      //   }).get(process.env.VUE_APP_API_URL + '/purchaseOrder/' + this.$route.params.eventId + '/' + result.id + '/validate').then((response) => {
-      //     this.$store.dispatch('LogToSlack', {
-      //       headline: 'Server Response',
-      //       log: response.data
-      //     })
-      //     if (response.data.success) {
-      //       this.haveResponse = true
-      //       switch (response.data.message) {
-      //         case "Tickets Exhausted":
-      //           swal({
-      //             title: response.data.message,
-      //             text: 'This ticket is exhausted :(',
-      //             type: 'warning'
-      //           })
-      //           break;
-      //
-      //         case "Ticket Found":
-      //           swal({
-      //             title: response.data.message,
-      //             text: "Ticket Found, Please Confirm Guests",
-      //             type: 'success'
-      //           })
-      //           this.TicketData = response.data.invoice
-      //           this.InvoiceId = response.data.invoice._id
-      //           this.GuestList = response.data.invoice.contents
-      //           if (this.qrCodeData.list != null) {
-      //             this.PartOfParty = true
-      //           } else {
-      //             this.FullParty = true
-      //           }
-      //           break;
-      //         default:
-      //           this.$store.dispatch('LogToSlack', {
-      //             headline: 'Scanning Error',
-      //             log: response.data
-      //           })
-      //       }
-      //     } else {
-      //       if (response.data.message == "Redemption Error") {
-      //         swal({
-      //           title: response.data.message,
-      //           text: response.data.error.message,
-      //           type: 'error'
-      //         })
-      //       }
-      //
-      //       this.$store.dispatch('LogToSlack', {
-      //         headline: 'Communication Error',
-      //         log: response.data
-      //       })
-      //     }
-      //   }).catch((e) => {
-      //     swal({
-      //       title: "Server Communication Error",
-      //       message: e.message,
-      //       type: 'error'
-      //     })
-      //     this.$store.dispatch('LogToSlack', {
-      //       headline: 'Communication Error',
-      //       log: e.message
-      //     })
-      //   })
-      // }
     }
   }
 }
